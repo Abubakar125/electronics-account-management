@@ -1,44 +1,133 @@
-.dialog-container {
-  padding: 8px;
-  text-align: center;
+.dialog-wrapper {
+  overflow: hidden;
+  border-radius: 16px;
+  width: 400px;
 }
 
-.dialog-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+/* ── Banner ── */
+.dialog-banner {
+  position: relative;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
 
-  mat-icon { font-size: 32px; width: 32px; height: 32px; }
+  &--danger  { background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%); }
+  &--warning { background: linear-gradient(135deg, #f7b731 0%, #e67e22 100%); }
+  &--info    { background: linear-gradient(135deg, #4facfe 0%, #2563eb 100%); }
+}
 
-  &--danger { background: #fee2e2; mat-icon { color: #dc2626; } }
-  &--warning { background: #fef3c7; mat-icon { color: #d97706; } }
-  &--info { background: #dbeafe; mat-icon { color: #2563eb; } }
+.banner-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    color: #fff;
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover { background: rgba(255,255,255,0.35); }
+}
+
+/* ── Body ── */
+.dialog-body {
+  padding: 28px 28px 24px;
+  text-align: center;
+  background: #fff;
 }
 
 .dialog-title {
-  font-size: 18px !important;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: #0f172a;
-  margin-bottom: 8px;
+  margin: 0 0 10px;
+  letter-spacing: -0.3px;
 }
 
-.dialog-message p {
+.dialog-message {
   color: #64748b;
-  margin: 0;
   font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 28px;
 }
 
+/* ── Actions ── */
 .dialog-actions {
   display: flex;
-  justify-content: center;
   gap: 12px;
-  padding: 16px 0 8px !important;
 }
 
-.btn--danger { background: #dc2626 !important; color: white !important; }
-.btn--warning { background: #d97706 !important; color: white !important; }
-.btn--info { background: #2563eb !important; color: white !important; }
+.btn-cancel {
+  flex: 1;
+  padding: 11px 0;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+}
+
+.btn-confirm {
+  flex: 1;
+  padding: 11px 0;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  letter-spacing: 0.2px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+  &:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+}
+
+.btn--danger  { background: linear-gradient(135deg, #ff4d4d, #c0392b); }
+.btn--warning { background: linear-gradient(135deg, #f7b731, #e67e22); }
+.btn--info    { background: linear-gradient(135deg, #4facfe, #2563eb); }

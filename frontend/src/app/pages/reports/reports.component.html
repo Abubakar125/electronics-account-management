@@ -1,67 +1,125 @@
-<div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1>Reports</h1>
-      <p class="subtitle">Financial reports and analysis</p>
+<div class="page-wrap">
+
+  <!-- Page Header -->
+  <div class="page-top">
+    <div class="page-title-wrap">
+      <div class="page-icon"><mat-icon>bar_chart</mat-icon></div>
+      <div>
+        <h1 class="page-title">Reports</h1>
+        <p class="page-sub">Financial reports and analysis</p>
+      </div>
     </div>
   </div>
 
-  <mat-tab-group>
-    <!-- Collection Report -->
-    <mat-tab label="Collection">
-      <div class="tab-content">
-        <div class="tab-header">
-          <div class="filters">
-            <select [(ngModel)]="period" (ngModelChange)="period.set($event); loadCollection()" class="filter-select">
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-            <input type="date" [(ngModel)]="dateFrom" (ngModelChange)="dateFrom.set($event); loadCollection()" class="date-input" />
-            <span>to</span>
-            <input type="date" [(ngModel)]="dateTo" (ngModelChange)="dateTo.set($event); loadCollection()" class="date-input" />
-          </div>
-          <button mat-stroked-button (click)="exportCollection()">
-            <mat-icon>download</mat-icon> Export Excel
-          </button>
-        </div>
+  <!-- Reports Card -->
+  <div class="reports-card">
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav-wrap">
+      <div class="tab-nav">
+        <button class="tab-btn" [class.active]="activeTab() === 'collection'" (click)="activeTab.set('collection')">
+          <mat-icon>payments</mat-icon> Collection
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'outstanding'" (click)="activeTab.set('outstanding')">
+          <mat-icon>account_balance</mat-icon> Outstanding
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="activeTab.set('completed')">
+          <mat-icon>check_circle</mat-icon> Completed
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'customers'" (click)="activeTab.set('customers')">
+          <mat-icon>people</mat-icon> Customers
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Collection Tab ── -->
+    @if (activeTab() === 'collection') {
+      <div class="tab-body">
 
         @if (collectionData()) {
-          <div class="totals-bar">
-            <div class="total-item"><span>Total Payments</span><strong>{{ collectionData().count }}</strong></div>
-            <div class="total-item highlight"><span>Total Amount</span><strong>{{ formatCurrency(collectionData().totalAmount) }}</strong></div>
+          <div class="summary-strip">
+            <div class="sum-card">
+              <div class="sum-icon blue"><mat-icon>receipt_long</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ collectionData().count }}</p>
+                <p class="sum-lbl">Total Payments</p>
+              </div>
+            </div>
+            <div class="sum-card">
+              <div class="sum-icon green"><mat-icon>payments</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ formatCurrency(collectionData().totalAmount) }}</p>
+                <p class="sum-lbl">Total Collected</p>
+              </div>
+            </div>
           </div>
         }
 
+        <div class="tab-toolbar">
+          <div class="filter-group">
+            <div class="filter-item">
+              <label class="filter-label">Period</label>
+              <select class="filter-select" [(ngModel)]="periodModel" (ngModelChange)="period.set($event); loadCollection()">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label class="filter-label">From</label>
+              <input type="date" [(ngModel)]="dateFromModel" (ngModelChange)="dateFrom.set($event); loadCollection()" class="date-input" />
+            </div>
+            <div class="filter-item">
+              <label class="filter-label">To</label>
+              <input type="date" [(ngModel)]="dateToModel" (ngModelChange)="dateTo.set($event); loadCollection()" class="date-input" />
+            </div>
+          </div>
+          <!-- <button class="export-btn" (click)="exportCollection()">
+            <mat-icon>download</mat-icon> Export Excel
+          </button> -->
+        </div>
+
         @if (collectionLoading()) {
-          <div class="skeleton" style="height: 200px; border-radius: 8px;"></div>
+          <div class="skeleton-block">
+            <div class="skeleton-tbl-head"></div>
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <div class="skeleton-tbl-row">
+                <div class="skeleton sk-pill"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-line-lg"></div>
+                <div class="skeleton sk-pill"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-amount"></div>
+              </div>
+            }
+          </div>
         } @else {
-          <div class="eims-table-container mt-3">
-            <table mat-table [dataSource]="collectionData()?.data || []" class="w-full">
+          <div class="table-wrap">
+            <table mat-table [dataSource]="collectionData()?.data || []" style="width:100%">
               <ng-container matColumnDef="receipt_no">
                 <th mat-header-cell *matHeaderCellDef>Receipt</th>
-                <td mat-cell *matCellDef="let p"><span class="mono">{{ p.receipt_no }}</span></td>
+                <td mat-cell *matCellDef="let p"><span class="pill-blue">{{ p.receipt_no }}</span></td>
               </ng-container>
               <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef>Date</th>
-                <td mat-cell *matCellDef="let p" class="text-sm">{{ p.payment_date | date:'dd MMM yyyy' }}</td>
+                <td mat-cell *matCellDef="let p"><span class="cell-date">{{ p.payment_date | date:'dd MMM yyyy' }}</span></td>
               </ng-container>
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef>Customer</th>
-                <td mat-cell *matCellDef="let p" class="text-sm font-medium">{{ p.account?.customer?.name }}</td>
+                <td mat-cell *matCellDef="let p"><span class="cell-name">{{ p.account?.customer?.name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="account">
                 <th mat-header-cell *matHeaderCellDef>Account</th>
-                <td mat-cell *matCellDef="let p"><span class="mono text-blue-600 text-sm">{{ p.account?.account_number }}</span></td>
+                <td mat-cell *matCellDef="let p"><span class="cell-mono blue">{{ p.account?.account_number }}</span></td>
               </ng-container>
               <ng-container matColumnDef="product">
                 <th mat-header-cell *matHeaderCellDef>Product</th>
-                <td mat-cell *matCellDef="let p" class="text-sm">{{ p.account?.product_name }}</td>
+                <td mat-cell *matCellDef="let p"><span class="cell-muted">{{ p.account?.product_name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef>Amount</th>
-                <td mat-cell *matCellDef="let p"><span class="amount-green">{{ formatCurrency(p.amount) }}</span></td>
+                <td mat-cell *matCellDef="let p"><span class="cell-amount green">{{ formatCurrency(p.amount) }}</span></td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="collectionColumns; sticky: true"></tr>
               <tr mat-row *matRowDef="let row; columns: collectionColumns;"></tr>
@@ -69,52 +127,84 @@
           </div>
         }
       </div>
-    </mat-tab>
+    }
 
-    <!-- Outstanding -->
-    <mat-tab label="Outstanding">
-      <div class="tab-content">
-        <div class="tab-header">
-          <div class="totals-bar" style="flex:1">
-            @if (outstandingData()) {
-              <div class="total-item"><span>Accounts</span><strong>{{ outstandingData().count }}</strong></div>
-              <div class="total-item highlight"><span>Total Outstanding</span><strong>{{ formatCurrency(outstandingData().totalOutstanding) }}</strong></div>
+    <!-- ── Outstanding Tab ── -->
+    @if (activeTab() === 'outstanding') {
+      <div class="tab-body">
+
+        @if (outstandingData()) {
+          <div class="summary-strip">
+            <div class="sum-card">
+              <div class="sum-icon purple"><mat-icon>account_balance_wallet</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ outstandingData().count }}</p>
+                <p class="sum-lbl">Active Accounts</p>
+              </div>
+            </div>
+            <div class="sum-card">
+              <div class="sum-icon red"><mat-icon>account_balance</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ formatCurrency(outstandingData().totalOutstanding) }}</p>
+                <p class="sum-lbl">Total Outstanding</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- <div class="tab-toolbar">
+          <div class="filter-group"></div>
+          <button class="export-btn" (click)="exportOutstanding()">
+            <mat-icon>download</mat-icon> Export Excel
+          </button>
+        </div> -->
+
+        @if (outstandingLoading()) {
+          <div class="skeleton-block">
+            <div class="skeleton-tbl-head"></div>
+            @for (i of [1,2,3,4,5]; track i) {
+              <div class="skeleton-tbl-row">
+                <div class="skeleton sk-pill"></div>
+                <div class="skeleton sk-line-lg"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-amount"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-badge"></div>
+              </div>
             }
           </div>
-          <button mat-stroked-button (click)="exportOutstanding()"><mat-icon>download</mat-icon> Export Excel</button>
-        </div>
-        @if (outstandingLoading()) {
-          <div class="skeleton" style="height: 200px; border-radius: 8px; margin-top: 12px;"></div>
         } @else {
-          <div class="eims-table-container mt-3">
-            <table mat-table [dataSource]="outstandingData()?.data || []" class="w-full">
+          <div class="table-wrap">
+            <table mat-table [dataSource]="outstandingData()?.data || []" style="width:100%">
               <ng-container matColumnDef="account_number">
                 <th mat-header-cell *matHeaderCellDef>Account</th>
-                <td mat-cell *matCellDef="let a"><span class="mono text-sm">{{ a.account_number }}</span></td>
+                <td mat-cell *matCellDef="let a"><span class="pill-purple">{{ a.account_number }}</span></td>
               </ng-container>
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef>Customer</th>
-                <td mat-cell *matCellDef="let a" class="text-sm font-medium">{{ a.customer?.name }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-name">{{ a.customer?.name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="product">
                 <th mat-header-cell *matHeaderCellDef>Product</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ a.product_name }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-muted">{{ a.product_name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef>Total</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ formatCurrency(a.total_price) }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-amount">{{ formatCurrency(a.total_price) }}</span></td>
               </ng-container>
               <ng-container matColumnDef="remaining">
                 <th mat-header-cell *matHeaderCellDef>Remaining</th>
-                <td mat-cell *matCellDef="let a"><span class="text-red-600 font-semibold text-sm">{{ formatCurrency(a.remaining) }}</span></td>
+                <td mat-cell *matCellDef="let a"><span class="cell-amount red">{{ formatCurrency(a.remaining) }}</span></td>
               </ng-container>
               <ng-container matColumnDef="monthly">
                 <th mat-header-cell *matHeaderCellDef>Monthly</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ formatCurrency(a.monthly_installment) }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-amount">{{ formatCurrency(a.monthly_installment) }}</span></td>
               </ng-container>
               <ng-container matColumnDef="due_date">
                 <th mat-header-cell *matHeaderCellDef>Due Date</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ a.due_date | date:'dd MMM yyyy' }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-date">{{ a.due_date | date:'dd MMM yyyy' }}</span></td>
               </ng-container>
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef>Status</th>
@@ -126,38 +216,63 @@
           </div>
         }
       </div>
-    </mat-tab>
+    }
 
-    <!-- Completed Accounts -->
-    <mat-tab label="Completed">
-      <div class="tab-content">
+    <!-- ── Completed Tab ── -->
+    @if (activeTab() === 'completed') {
+      <div class="tab-body">
+
+        @if (completedData()) {
+          <div class="summary-strip">
+            <div class="sum-card">
+              <div class="sum-icon teal"><mat-icon>check_circle</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ completedData()?.count ?? 0 }}</p>
+                <p class="sum-lbl">Completed Accounts</p>
+              </div>
+            </div>
+          </div>
+        }
+
         @if (completedLoading()) {
-          <div class="skeleton" style="height: 200px; border-radius: 8px;"></div>
+          <div class="skeleton-block">
+            <div class="skeleton-tbl-head"></div>
+            @for (i of [1,2,3,4,5]; track i) {
+              <div class="skeleton-tbl-row">
+                <div class="skeleton sk-pill"></div>
+                <div class="skeleton sk-line-lg"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-amount"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-badge"></div>
+              </div>
+            }
+          </div>
         } @else {
-          <div class="eims-table-container">
-            <table mat-table [dataSource]="completedData()?.data || []" class="w-full">
+          <div class="table-wrap">
+            <table mat-table [dataSource]="completedData()?.data || []" style="width:100%">
               <ng-container matColumnDef="account_number">
                 <th mat-header-cell *matHeaderCellDef>Account</th>
-                <td mat-cell *matCellDef="let a"><span class="mono text-sm">{{ a.account_number }}</span></td>
+                <td mat-cell *matCellDef="let a"><span class="pill-teal">{{ a.account_number }}</span></td>
               </ng-container>
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef>Customer</th>
-                <td mat-cell *matCellDef="let a" class="text-sm font-medium">{{ a.customer?.name }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-name">{{ a.customer?.name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="product">
                 <th mat-header-cell *matHeaderCellDef>Product</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ a.product_name }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-muted">{{ a.product_name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef>Total Price</th>
-                <td mat-cell *matCellDef="let a" class="text-sm font-semibold">{{ formatCurrency(a.total_price) }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-amount bold">{{ formatCurrency(a.total_price) }}</span></td>
               </ng-container>
               <ng-container matColumnDef="purchase_date">
                 <th mat-header-cell *matHeaderCellDef>Purchase Date</th>
-                <td mat-cell *matCellDef="let a" class="text-sm">{{ a.purchase_date | date:'dd MMM yyyy' }}</td>
+                <td mat-cell *matCellDef="let a"><span class="cell-date">{{ a.purchase_date | date:'dd MMM yyyy' }}</span></td>
               </ng-container>
               <ng-container matColumnDef="completed_date">
-                <th mat-header-cell *matHeaderCellDef>Completed</th>
+                <th mat-header-cell *matHeaderCellDef>Status</th>
                 <td mat-cell *matCellDef="let a"><span class="badge badge-completed">Completed</span></td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="completedColumns; sticky: true"></tr>
@@ -166,43 +281,69 @@
           </div>
         }
       </div>
-    </mat-tab>
+    }
 
-    <!-- Customer Report -->
-    <mat-tab label="Customers">
-      <div class="tab-content">
+    <!-- ── Customers Tab ── -->
+    @if (activeTab() === 'customers') {
+      <div class="tab-body">
+
+        @if (customerData().length) {
+          <div class="summary-strip">
+            <div class="sum-card">
+              <div class="sum-icon purple"><mat-icon>people</mat-icon></div>
+              <div>
+                <p class="sum-val">{{ customerData().length }}</p>
+                <p class="sum-lbl">Total Customers</p>
+              </div>
+            </div>
+          </div>
+        }
+
         @if (customerLoading()) {
-          <div class="skeleton" style="height: 200px; border-radius: 8px;"></div>
+          <div class="skeleton-block">
+            <div class="skeleton-tbl-head"></div>
+            @for (i of [1,2,3,4,5]; track i) {
+              <div class="skeleton-tbl-row">
+                <div class="skeleton sk-pill"></div>
+                <div class="skeleton sk-line-lg"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-line"></div>
+                <div class="skeleton sk-amount"></div>
+                <div class="skeleton sk-amount"></div>
+              </div>
+            }
+          </div>
         } @else {
-          <div class="eims-table-container">
-            <table mat-table [dataSource]="customerData()" class="w-full">
+          <div class="table-wrap">
+            <table mat-table [dataSource]="customerData()" style="width:100%">
               <ng-container matColumnDef="code">
                 <th mat-header-cell *matHeaderCellDef>Code</th>
-                <td mat-cell *matCellDef="let c"><span class="mono text-sm">{{ c.customer_code }}</span></td>
+                <td mat-cell *matCellDef="let c"><span class="pill-purple">{{ c.customer_code }}</span></td>
               </ng-container>
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Name</th>
-                <td mat-cell *matCellDef="let c" class="text-sm font-medium">{{ c.name }}</td>
+                <td mat-cell *matCellDef="let c"><span class="cell-name">{{ c.name }}</span></td>
               </ng-container>
               <ng-container matColumnDef="phone">
                 <th mat-header-cell *matHeaderCellDef>Phone</th>
-                <td mat-cell *matCellDef="let c" class="text-sm">{{ c.phone1 }}</td>
+                <td mat-cell *matCellDef="let c"><span class="cell-muted">{{ c.phone1 }}</span></td>
               </ng-container>
               <ng-container matColumnDef="cnic">
                 <th mat-header-cell *matHeaderCellDef>CNIC</th>
-                <td mat-cell *matCellDef="let c" class="mono text-sm">{{ c.cnic }}</td>
+                <td mat-cell *matCellDef="let c"><span class="cell-mono">{{ c.cnic }}</span></td>
               </ng-container>
               <ng-container matColumnDef="accounts">
                 <th mat-header-cell *matHeaderCellDef>Accounts</th>
-                <td mat-cell *matCellDef="let c" class="text-center text-sm">{{ c.totalAccounts }}</td>
+                <td mat-cell *matCellDef="let c"><span class="acc-count">{{ c.totalAccounts }}</span></td>
               </ng-container>
               <ng-container matColumnDef="paid">
                 <th mat-header-cell *matHeaderCellDef>Total Paid</th>
-                <td mat-cell *matCellDef="let c"><span class="amount-green text-sm">{{ formatCurrency(c.totalPaid) }}</span></td>
+                <td mat-cell *matCellDef="let c"><span class="cell-amount green">{{ formatCurrency(c.totalPaid) }}</span></td>
               </ng-container>
               <ng-container matColumnDef="outstanding">
                 <th mat-header-cell *matHeaderCellDef>Outstanding</th>
-                <td mat-cell *matCellDef="let c"><span class="text-red-600 text-sm font-semibold">{{ formatCurrency(c.outstanding) }}</span></td>
+                <td mat-cell *matCellDef="let c"><span class="cell-amount red">{{ formatCurrency(c.outstanding) }}</span></td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="customerColumns; sticky: true"></tr>
               <tr mat-row *matRowDef="let row; columns: customerColumns;"></tr>
@@ -210,6 +351,7 @@
           </div>
         }
       </div>
-    </mat-tab>
-  </mat-tab-group>
+    }
+
+  </div>
 </div>

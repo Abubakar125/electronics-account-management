@@ -14,7 +14,10 @@ export interface Customer {
   phone2?: string;
   address?: string;
   occupation?: string;
-  reference?: string;
+  ref_name?: string;
+  ref_phone?: string;
+  ref_cnic?: string;
+  ref_address?: string;
   photo?: string;
   cnic_front?: string;
   cnic_back?: string;

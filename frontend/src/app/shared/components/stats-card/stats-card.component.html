@@ -1,18 +1,18 @@
 @if (loading) {
-  <div class="card skeleton-card">
-    <div class="skeleton" style="height: 20px; width: 60%; margin-bottom: 12px;"></div>
-    <div class="skeleton" style="height: 36px; width: 80%;"></div>
+  <div class="skeleton-card">
+    <div class="skeleton" style="height:14px;width:55%;margin-bottom:16px;border-radius:4px;"></div>
+    <div class="skeleton" style="height:32px;width:70%;margin-bottom:12px;border-radius:4px;"></div>
+    <div class="skeleton" style="height:10px;width:40%;border-radius:4px;"></div>
   </div>
 } @else {
-  <div class="card" [class]="'card--' + color">
-    <div class="card-content">
-      <div class="card-info">
-        <p class="card-title">{{ title }}</p>
-        <p class="card-value">{{ prefix }}{{ value | number }}{{ suffix }}</p>
-      </div>
-      <div class="card-icon" [class]="'icon--' + color">
+  <div class="stat-card" [ngClass]="'stat-card--' + color">
+    <div class="stat-top">
+      <p class="stat-title">{{ title }}</p>
+      <div class="stat-icon-wrap">
         <mat-icon>{{ icon }}</mat-icon>
       </div>
     </div>
+    <p class="stat-value">{{ prefix }}{{ value | number }}{{ suffix }}</p>
+    <div class="stat-bar"></div>
   </div>
 }

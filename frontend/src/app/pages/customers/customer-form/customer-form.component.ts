@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '../../../services/customer.service';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-customer-form',
@@ -23,13 +22,6 @@ export class CustomerFormComponent implements OnInit {
   customerId = signal<number | null>(null);
   loading = signal(false);
   saving = signal(false);
-  uploadsUrl = environment.uploadsUrl;
-
-  photoPreview = signal<string | null>(null);
-  cnicFrontPreview = signal<string | null>(null);
-  cnicBackPreview = signal<string | null>(null);
-
-  private files: { photo?: File; cnic_front?: File; cnic_back?: File } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +38,10 @@ export class CustomerFormComponent implements OnInit {
       phone2: [''],
       address: [''],
       occupation: [''],
-      reference: [''],
+      ref_name: [''],
+      ref_phone: [''],
+      ref_cnic: ['', [Validators.pattern(/^\d{5}-\d{7}-\d{1}$/)]],
+      ref_address: [''],
     });
   }
 
@@ -67,45 +62,23 @@ export class CustomerFormComponent implements OnInit {
         this.form.patchValue({
           name: c.name, father_name: c.father_name, cnic: c.cnic,
           phone1: c.phone1, phone2: c.phone2, address: c.address,
-          occupation: c.occupation, reference: c.reference,
+          occupation: c.occupation,
+          ref_name: c.ref_name, ref_phone: c.ref_phone,
+          ref_cnic: c.ref_cnic, ref_address: c.ref_address,
         });
-        if (c.photo) this.photoPreview.set(`${this.uploadsUrl}${c.photo}`);
-        if (c.cnic_front) this.cnicFrontPreview.set(`${this.uploadsUrl}${c.cnic_front}`);
-        if (c.cnic_back) this.cnicBackPreview.set(`${this.uploadsUrl}${c.cnic_back}`);
         this.loading.set(false);
       },
       error: () => { this.loading.set(false); this.router.navigate(['/customers']); },
     });
   }
 
-  onFileChange(event: Event, field: 'photo' | 'cnic_front' | 'cnic_back') {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    this.files[field] = file;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (field === 'photo') this.photoPreview.set(result);
-      if (field === 'cnic_front') this.cnicFrontPreview.set(result);
-      if (field === 'cnic_back') this.cnicBackPreview.set(result);
-    };
-    reader.readAsDataURL(file);
-  }
-
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving.set(true);
 
-    const formData = new FormData();
-    Object.entries(this.form.value).forEach(([k, v]) => { if (v) formData.append(k, String(v)); });
-    if (this.files.photo) formData.append('photo', this.files.photo);
-    if (this.files.cnic_front) formData.append('cnic_front', this.files.cnic_front);
-    if (this.files.cnic_back) formData.append('cnic_back', this.files.cnic_back);
-
     const request$ = this.isEdit()
-      ? this.customerService.update(this.customerId()!, formData)
-      : this.customerService.create(formData);
+      ? this.customerService.update(this.customerId()!, this.form.value)
+      : this.customerService.create(this.form.value);
 
     request$.subscribe({
       next: (res) => {

@@ -2,18 +2,13 @@ import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -22,12 +17,13 @@ export class LoginComponent {
   loading = signal(false);
   hidePassword = signal(true);
   errorMessage = signal('');
+  userFocused = false;
+  passFocused = false;
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private snack: MatSnackBar,
   ) {
     this.form = this.fb.group({
       username: ['', [Validators.required]],

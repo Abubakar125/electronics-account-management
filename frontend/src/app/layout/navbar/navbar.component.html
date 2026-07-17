@@ -1,42 +1,81 @@
 <header class="navbar">
+
+  <!-- Left: toggle + page context -->
   <div class="navbar-left">
-    <button mat-icon-button (click)="onToggleSidebar()" matTooltip="Toggle sidebar">
+    <button class="toggle-btn" (click)="onToggleSidebar()">
       <mat-icon>menu</mat-icon>
     </button>
 
-    <div class="search-bar">
+    <div class="nav-sep"></div>
+
+    <div class="page-context">
+      <div class="page-ctx-icon" [style.background]="currentPage().gradient">
+        <mat-icon>{{ currentPage().icon }}</mat-icon>
+      </div>
+      <span class="page-ctx-name">{{ currentPage().name }}</span>
+    </div>
+  </div>
+
+  <!-- Center: search -->
+  <div class="navbar-center">
+    <div class="search-wrap" [class.focused]="searchFocused">
       <mat-icon class="search-icon">search</mat-icon>
       <input
         type="text"
         [(ngModel)]="searchQuery"
-        placeholder="Search customer name, CNIC, phone..."
+        placeholder="Search customers, accounts..."
         (keyup.enter)="onSearch()"
+        (focus)="searchFocused = true"
+        (blur)="searchFocused = false"
         class="search-input"
       />
+      @if (searchQuery) {
+        <button class="search-clear" (click)="searchQuery = ''">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </div>
   </div>
 
+  <!-- Right: user -->
   <div class="navbar-right">
-    <button mat-icon-button (click)="toggleDarkMode()" [matTooltip]="isDarkMode() ? 'Light Mode' : 'Dark Mode'">
-      <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
 
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" matTooltip="Account">
-      <div class="avatar">{{ auth.currentUser()?.username?.charAt(0)?.toUpperCase() }}</div>
-    </button>
-
-    <mat-menu #userMenu="matMenu">
-      <div class="menu-header">
-        <p class="menu-username">{{ auth.currentUser()?.username }}</p>
-        <p class="menu-role">Administrator</p>
+    <button class="user-btn" [matMenuTriggerFor]="userMenu">
+      <div class="user-avatar">{{ auth.currentUser()?.username?.charAt(0)?.toUpperCase() }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ auth.currentUser()?.username }}</span>
+        <span class="user-role">Administrator</span>
       </div>
-      <mat-divider></mat-divider>
-      <button mat-menu-item routerLink="/settings">
-        <mat-icon>settings</mat-icon> Settings
-      </button>
-      <button mat-menu-item (click)="auth.logout()">
-        <mat-icon>logout</mat-icon> Logout
-      </button>
+      <mat-icon class="user-chevron">expand_more</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu" class="user-dropdown">
+
+      <!-- Profile header -->
+      <div class="drop-header" (click)="$event.stopPropagation()">
+        <div class="drop-avatar">{{ auth.currentUser()?.username?.charAt(0)?.toUpperCase() }}</div>
+        <div class="drop-header-info">
+          <p class="drop-name">{{ auth.currentUser()?.username }}</p>
+          <span class="drop-role-pill">Administrator</span>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="drop-items">
+        <button mat-menu-item routerLink="/settings" class="drop-item">
+          <div class="drop-item-icon settings-icon"><mat-icon>settings</mat-icon></div>
+          <span class="drop-item-label">Settings</span>
+        </button>
+
+        <div class="drop-sep"></div>
+
+        <button mat-menu-item (click)="auth.logout()" class="drop-item drop-logout">
+          <div class="drop-item-icon logout-icon"><mat-icon>logout</mat-icon></div>
+          <span class="drop-item-label">Sign out</span>
+        </button>
+      </div>
+
     </mat-menu>
+
   </div>
 </header>

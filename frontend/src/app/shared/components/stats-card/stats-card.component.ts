@@ -13,7 +13,7 @@ export class StatsCardComponent {
   @Input() title = '';
   @Input() value: number | string = 0;
   @Input() icon = 'info';
-  @Input() color: 'blue' | 'green' | 'amber' | 'red' | 'purple' = 'blue';
+  @Input() color: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'teal' = 'blue';
   @Input() prefix = '';
   @Input() suffix = '';
   @Input() loading = false;

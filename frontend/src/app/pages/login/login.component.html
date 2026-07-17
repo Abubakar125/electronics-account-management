@@ -1,64 +1,111 @@
 <div class="login-page">
-  <div class="login-bg"></div>
 
-  <div class="login-container">
-    <!-- Logo -->
-    <div class="login-logo">
-      <div class="logo-circle">
-        <mat-icon>bolt</mat-icon>
+  <!-- ── Left image panel ── -->
+  <div class="left-panel">
+    <div class="left-image"></div>
+    <div class="left-overlay"></div>
+    <div class="left-content">
+      <div class="left-logo">
+        <div class="left-icon"><mat-icon>bolt</mat-icon></div>
+        <div>
+          <span class="left-brand">Farhan Electronics</span>
+          <span class="left-tagline">Electronics Installment Management</span>
+        </div>
       </div>
-      <h1 class="company-name">Farhan Electronics</h1>
-      <p class="company-sub">Installment Management System</p>
+      <div class="left-quote">
+        <p>"Empowering businesses with seamless installment management since 2024."</p>
+      </div>
     </div>
+  </div>
 
-    <!-- Card -->
-    <div class="login-card">
-      <h2 class="card-title">Welcome Back</h2>
-      <p class="card-sub">Sign in to your administrator account</p>
+  <!-- ── Divider ── -->
+  <div class="panel-divider"></div>
+
+  <!-- ── Right form panel ── -->
+  <div class="right-panel">
+    <div class="right-inner">
+
+      <div class="form-header">
+        <div class="form-logo">
+          <div class="form-icon"><mat-icon>bolt</mat-icon></div>
+          <span class="form-brand-name">EIMS</span>
+        </div>
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-sub">Sign in to your administrator account</p>
+      </div>
 
       @if (errorMessage()) {
         <div class="error-alert">
           <mat-icon>error_outline</mat-icon>
-          {{ errorMessage() }}
+          <span>{{ errorMessage() }}</span>
         </div>
       }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" autocomplete="username" />
-          <mat-icon matPrefix>person</mat-icon>
+
+        <div class="field-group">
+          <label>Username</label>
+          <div class="input-wrap" [class.focused]="userFocused" [class.has-error]="form.get('username')?.invalid && form.get('username')?.touched">
+            <mat-icon class="field-icon">person_outline</mat-icon>
+            <input
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
+              autocomplete="username"
+              (focus)="userFocused = true"
+              (blur)="userFocused = false"
+            />
+          </div>
           @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
-            <mat-error>Username is required</mat-error>
+            <span class="field-error">Username is required</span>
           }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
-          <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" autocomplete="current-password" />
-          <mat-icon matPrefix>lock</mat-icon>
-          <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
-            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
-            <mat-error>Password is required</mat-error>
-          }
-        </mat-form-field>
-
-        <div class="form-footer">
-          <mat-checkbox formControlName="rememberMe" color="primary">Remember Me</mat-checkbox>
         </div>
 
-        <button mat-flat-button color="primary" type="submit" class="login-btn" [disabled]="form.invalid || loading()">
+        <div class="field-group">
+          <label>Password</label>
+          <div class="input-wrap" [class.focused]="passFocused" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
+            <mat-icon class="field-icon">lock_outline</mat-icon>
+            <input
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              (focus)="passFocused = true"
+              (blur)="passFocused = false"
+            />
+            <button type="button" class="toggle-pass" (click)="togglePassword()">
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <span class="field-error">Password is required</span>
+          }
+        </div>
+
+        <!-- <div class="form-footer-row">
+          <label class="remember-label">
+            <input type="checkbox" formControlName="rememberMe" />
+            <span class="checkmark"></span>
+            Keep me signed in
+          </label>
+        </div> -->
+
+        <button type="submit" class="login-btn" [disabled]="form.invalid || loading()">
+          <span class="btn-shimmer"></span>
           @if (loading()) {
-            <ng-container><mat-icon class="spin">refresh</mat-icon> Signing in...</ng-container>
+            <mat-icon class="spin">refresh</mat-icon>
+            <span>Signing in…</span>
           } @else {
-            Sign In
+            <span>Sign In</span>
+            <mat-icon>arrow_forward</mat-icon>
           }
         </button>
-      </form>
-    </div>
 
-    <p class="footer-text">© 2026 Farhan Electronics · EIMS v1.0</p>
+      </form>
+
+      <p class="footer-text">© 2026 Farhan Electronics &nbsp;·&nbsp; All rights reserved</p>
+
+    </div>
   </div>
+
 </div>

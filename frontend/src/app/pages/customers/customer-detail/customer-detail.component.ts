@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -15,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-customer-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatIconModule, MatButtonModule, MatTabsModule],
+  imports: [CommonModule, RouterLink, MatIconModule, MatButtonModule],
   templateUrl: './customer-detail.component.html',
   styleUrl: './customer-detail.component.scss',
 })
@@ -24,6 +23,7 @@ export class CustomerDetailComponent implements OnInit {
   timeline = signal<TimelineEvent[]>([]);
   summary = signal<CustomerSummary | null>(null);
   loading = signal(true);
+  activeTab = signal<string>('accounts');
   uploadsUrl = environment.uploadsUrl;
 
   constructor(
@@ -42,13 +42,9 @@ export class CustomerDetailComponent implements OnInit {
   loadCustomer(id: number) {
     this.loading.set(true);
     this.customerService.getById(id).subscribe({
-      next: (res) => {
-        this.customer.set(res.data);
-        this.loading.set(false);
-      },
+      next: (res) => { this.customer.set(res.data); this.loading.set(false); },
       error: () => { this.loading.set(false); this.router.navigate(['/customers']); },
     });
-
     this.customerService.getTimeline(id).subscribe(res => this.timeline.set(res.data));
     this.customerService.getSummary(id).subscribe(res => this.summary.set(res.data));
   }
@@ -68,10 +64,7 @@ export class CustomerDetailComponent implements OnInit {
     });
   }
 
-  getStatusClass(status: string): string {
-    return 'badge badge-' + status;
-  }
-
+  getStatusClass(status: string) { return 'status-badge status-' + status; }
   photoUrl(path?: string) { return path ? `${this.uploadsUrl}${path}` : null; }
   formatCurrency(n: number) { return `PKR ${(n || 0).toLocaleString()}`; }
 }

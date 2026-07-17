@@ -10,7 +10,11 @@ const customerCreateRules = [
   body('phone2').optional().trim().isLength({ max: 20 }),
   body('address').optional().trim(),
   body('occupation').optional().trim().isLength({ max: 100 }),
-  body('reference').optional().trim().isLength({ max: 150 }),
+  body('ref_name').optional().trim().isLength({ max: 150 }),
+  body('ref_phone').optional().trim().isLength({ max: 20 }),
+  body('ref_cnic').optional().trim()
+    .matches(/^\d{5}-\d{7}-\d{1}$/).withMessage('Reference CNIC must be in format: 35201-1234567-1'),
+  body('ref_address').optional().trim(),
 ];
 
 const customerUpdateRules = [
@@ -22,7 +26,11 @@ const customerUpdateRules = [
   body('phone2').optional().trim().isLength({ max: 20 }),
   body('address').optional().trim(),
   body('occupation').optional().trim().isLength({ max: 100 }),
-  body('reference').optional().trim().isLength({ max: 150 }),
+  body('ref_name').optional().trim().isLength({ max: 150 }),
+  body('ref_phone').optional().trim().isLength({ max: 20 }),
+  body('ref_cnic').optional().trim()
+    .matches(/^\d{5}-\d{7}-\d{1}$/).withMessage('Reference CNIC must be in format: 35201-1234567-1'),
+  body('ref_address').optional().trim(),
 ];
 
 module.exports = { customerCreateRules, customerUpdateRules };

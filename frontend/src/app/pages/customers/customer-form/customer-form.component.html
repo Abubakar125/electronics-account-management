@@ -1,143 +1,194 @@
-<div class="page-container">
-  <div class="page-header">
-    <div class="header-left">
-      <a mat-icon-button routerLink="/customers"><mat-icon>arrow_back</mat-icon></a>
-      <h1>{{ isEdit() ? 'Edit Customer' : 'Add New Customer' }}</h1>
-    </div>
-  </div>
+<div class="page-wrap">
+
+  <a class="back-link" routerLink="/customers">
+    <mat-icon>arrow_back</mat-icon>
+    All Customers
+  </a>
 
   @if (loading()) {
-    <div class="eims-card">
-      <div class="skeleton-form">
-        @for (i of [1,2,3,4,5,6]; track i) {
-          <div class="skeleton" style="height: 56px; border-radius: 6px; margin-bottom: 16px;"></div>
-        }
+    <div class="register-card">
+      <div class="left-panel">
+        <div class="left-icon"><mat-icon>person_add</mat-icon></div>
+        <p class="left-eyebrow">Farhan Electronics</p>
+        <h2 class="left-title">Loading…</h2>
+      </div>
+      <div class="right-panel">
+        <div class="form-columns">
+          <div class="form-col skeleton-body">
+            @for (i of [1,2,3,4,5]; track i) {
+              <div class="skeleton" style="height:52px; border-radius:10px;"></div>
+            }
+          </div>
+          <div class="col-divider"></div>
+          <div class="form-col skeleton-body">
+            @for (i of [1,2,3,4]; track i) {
+              <div class="skeleton" style="height:52px; border-radius:10px;"></div>
+            }
+          </div>
+        </div>
       </div>
     </div>
   } @else {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="form-grid">
-        <!-- Personal Info -->
-        <div class="eims-card">
-          <h2 class="section-title">Personal Information</h2>
-          <div class="fields-grid">
-            <mat-form-field appearance="outline">
-              <mat-label>Full Name *</mat-label>
-              <input matInput formControlName="name" />
-              @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
-                <mat-error>Name is required</mat-error>
+      <div class="register-card">
+
+        <!-- ── Left Info Panel ── -->
+        <div class="left-panel">
+          <div class="left-icon">
+            <mat-icon>person_add</mat-icon>
+          </div>
+          <p class="left-eyebrow">Farhan Electronics</p>
+          <h2 class="left-title">{{ isEdit() ? 'Edit Customer' : 'New Customer' }}</h2>
+          <p class="left-desc">
+            {{ isEdit()
+              ? 'Update the stored details for this customer account.'
+              : 'Register a new customer to start creating installment accounts.' }}
+          </p>
+
+          <div class="left-checklist">
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Full name &amp; CNIC</div>
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Mobile number</div>
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Address &amp; occupation</div>
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Reference person info</div>
+          </div>
+
+          <p class="left-note">Fields marked <span class="req-mark">*</span> are required.</p>
+        </div>
+
+        <!-- ── Right Form Panel ── -->
+        <div class="right-panel">
+          <div class="form-columns">
+
+            <!-- Customer Details Column -->
+            <div class="form-col">
+              <p class="col-heading">Customer Details</p>
+
+              <div class="row-2">
+                <div class="field-group">
+                  <label class="field-label">Full Name <span class="req">*</span></label>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput formControlName="name" placeholder="e.g. Muhammad Ali" />
+                    @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+                      <mat-error>Name is required</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label">Father / Husband Name</label>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput formControlName="father_name" placeholder="Optional" />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">CNIC <span class="req">*</span></label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="cnic" placeholder="35201-1234567-1" />
+                  <mat-hint>Format: 35201-1234567-1</mat-hint>
+                  @if (form.get('cnic')?.hasError('required') && form.get('cnic')?.touched) {
+                    <mat-error>CNIC is required</mat-error>
+                  }
+                  @if (form.get('cnic')?.hasError('pattern') && form.get('cnic')?.touched) {
+                    <mat-error>Invalid format — use 35201-1234567-1</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="row-2">
+                <div class="field-group">
+                  <label class="field-label">Mobile Number 1 <span class="req">*</span></label>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput formControlName="phone1" placeholder="03XX-XXXXXXX" />
+                    @if (form.get('phone1')?.hasError('required') && form.get('phone1')?.touched) {
+                      <mat-error>Phone number is required</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label">Mobile Number 2</label>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput formControlName="phone2" placeholder="Optional" />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Occupation</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="occupation" placeholder="e.g. Teacher, Business" />
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Home Address</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <textarea matInput formControlName="address" rows="3" placeholder="Street, City, Area..."></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Vertical Divider -->
+            <div class="col-divider"></div>
+
+            <!-- Reference Person Column -->
+            <div class="form-col">
+              <p class="col-heading">Reference Person</p>
+
+              <div class="field-group">
+                <label class="field-label">Full Name</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="ref_name" placeholder="Reference person's name" />
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Phone Number</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="ref_phone" placeholder="03XX-XXXXXXX" />
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">CNIC</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="ref_cnic" placeholder="35201-1234567-1" />
+                  <mat-hint>Optional — Format: 35201-1234567-1</mat-hint>
+                  @if (form.get('ref_cnic')?.hasError('pattern') && form.get('ref_cnic')?.touched) {
+                    <mat-error>Invalid format — use 35201-1234567-1</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Address</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <textarea matInput formControlName="ref_address" rows="3" placeholder="Reference person's address..."></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="form-foot">
+            <a class="cancel-link" routerLink="/customers">Cancel</a>
+            <button type="submit" class="submit-btn" [disabled]="saving()">
+              @if (saving()) {
+                <mat-icon class="spin">refresh</mat-icon>
+                Saving…
+              } @else {
+                {{ isEdit() ? 'Update Customer' : 'Register Customer' }}
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
               }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Father / Husband Name</mat-label>
-              <input matInput formControlName="father_name" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>CNIC *</mat-label>
-              <input matInput formControlName="cnic" placeholder="35201-1234567-1" />
-              @if (form.get('cnic')?.hasError('pattern') && form.get('cnic')?.touched) {
-                <mat-error>Format: 35201-1234567-1</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Mobile Number 1 *</mat-label>
-              <mat-icon matPrefix>phone</mat-icon>
-              <input matInput formControlName="phone1" />
-              @if (form.get('phone1')?.hasError('required') && form.get('phone1')?.touched) {
-                <mat-error>Phone is required</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Mobile Number 2</mat-label>
-              <mat-icon matPrefix>phone</mat-icon>
-              <input matInput formControlName="phone2" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Occupation</mat-label>
-              <input matInput formControlName="occupation" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Address</mat-label>
-              <textarea matInput formControlName="address" rows="2"></textarea>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Reference</mat-label>
-              <input matInput formControlName="reference" />
-            </mat-form-field>
+            </button>
           </div>
         </div>
 
-        <!-- Documents -->
-        <div class="eims-card">
-          <h2 class="section-title">Documents & Photos</h2>
-
-          <div class="upload-grid">
-            <!-- Customer Photo -->
-            <div class="upload-item">
-              <p class="upload-label">Customer Photo</p>
-              <div class="upload-box" (click)="photoInput.click()">
-                @if (photoPreview()) {
-                  <img [src]="photoPreview()" alt="Photo" class="preview-img" />
-                } @else {
-                  <div class="upload-placeholder">
-                    <mat-icon>add_a_photo</mat-icon>
-                    <span>Click to upload</span>
-                  </div>
-                }
-              </div>
-              <input #photoInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'photo')" />
-            </div>
-
-            <!-- CNIC Front -->
-            <div class="upload-item">
-              <p class="upload-label">CNIC Front</p>
-              <div class="upload-box" (click)="cnicFrontInput.click()">
-                @if (cnicFrontPreview()) {
-                  <img [src]="cnicFrontPreview()" alt="CNIC Front" class="preview-img" />
-                } @else {
-                  <div class="upload-placeholder">
-                    <mat-icon>credit_card</mat-icon>
-                    <span>Click to upload</span>
-                  </div>
-                }
-              </div>
-              <input #cnicFrontInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'cnic_front')" />
-            </div>
-
-            <!-- CNIC Back -->
-            <div class="upload-item">
-              <p class="upload-label">CNIC Back</p>
-              <div class="upload-box" (click)="cnicBackInput.click()">
-                @if (cnicBackPreview()) {
-                  <img [src]="cnicBackPreview()" alt="CNIC Back" class="preview-img" />
-                } @else {
-                  <div class="upload-placeholder">
-                    <mat-icon>credit_card</mat-icon>
-                    <span>Click to upload</span>
-                  </div>
-                }
-              </div>
-              <input #cnicBackInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'cnic_back')" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="form-actions">
-        <a mat-stroked-button routerLink="/customers">Cancel</a>
-        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
-          @if (saving()) { <mat-icon class="spin">refresh</mat-icon> } Saving...
-          {{ !saving() ? (isEdit() ? 'Update Customer' : 'Create Customer') : '' }}
-        </button>
       </div>
     </form>
   }
+
 </div>

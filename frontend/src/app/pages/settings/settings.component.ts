@@ -33,8 +33,6 @@ export class SettingsComponent implements OnInit {
       company_name: [''],
       phone: [''],
       address: [''],
-      currency: ['PKR'],
-      receipt_footer: [''],
     });
   }
 
@@ -42,7 +40,7 @@ export class SettingsComponent implements OnInit {
     this.settingsService.get().subscribe({
       next: (res) => {
         const s = res.data;
-        this.form.patchValue({ company_name: s.company_name, phone: s.phone, address: s.address, currency: s.currency, receipt_footer: s.receipt_footer });
+        this.form.patchValue({ company_name: s.company_name, phone: s.phone, address: s.address });
         if (s.logo) this.logoPreview.set(`${this.uploadsUrl}${s.logo}`);
         this.loading.set(false);
       },

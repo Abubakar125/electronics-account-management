@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -19,7 +18,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule, MatInputModule, MatFormFieldModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule, MatButtonModule, MatInputModule, MatFormFieldModule],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.scss',
 })
@@ -32,7 +31,8 @@ export class CustomerListComponent implements OnInit {
   searchQuery = signal('');
   uploadsUrl = environment.uploadsUrl;
 
-  displayedColumns = ['photo', 'customer_code', 'name', 'cnic', 'phone1', 'accounts', 'created_at', 'actions'];
+  searchFocused = false;
+  pageSizeModel = 10;
 
   private searchSubject = new Subject<string>();
 
@@ -77,9 +77,38 @@ export class CustomerListComponent implements OnInit {
     this.searchSubject.next(q);
   }
 
-  onPage(e: PageEvent) {
-    this.page.set(e.pageIndex);
-    this.pageSize.set(e.pageSize);
+  min = Math.min;
+
+  get totalPages(): number {
+    return Math.ceil(this.total() / this.pageSize());
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.page();
+    const pages: number[] = [];
+    if (total <= 7) {
+      for (let i = 0; i < total; i++) pages.push(i);
+    } else {
+      pages.push(0);
+      if (current > 2) pages.push(-1);
+      for (let i = Math.max(1, current - 1); i <= Math.min(total - 2, current + 1); i++) pages.push(i);
+      if (current < total - 3) pages.push(-1);
+      pages.push(total - 1);
+    }
+    return pages;
+  }
+
+  goToPage(p: number) {
+    if (p < 0 || p >= this.totalPages || p === this.page()) return;
+    this.page.set(p);
+    this.load();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSizeModel = size;
+    this.pageSize.set(size);
+    this.page.set(0);
     this.load();
   }
 
@@ -108,6 +137,18 @@ export class CustomerListComponent implements OnInit {
     });
   }
 
+  activeCount(): number {
+    return this.customers().reduce((sum, c) => sum + (c.accounts?.filter((a: any) => ['active','overdue'].includes(a.status)).length || 0), 0);
+  }
+
+  newThisMonth(): number {
+    const now = new Date();
+    return this.customers().filter(c => {
+      const d = new Date(c.created_at);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+  }
+
   getStatusBadge(accounts: any[]): string {
     const active = accounts?.filter(a => ['active', 'overdue'].includes(a.status)).length || 0;
     return `${active} active`;
@@ -115,5 +156,17 @@ export class CustomerListComponent implements OnInit {
 
   photoUrl(path?: string): string {
     return path ? `${this.uploadsUrl}${path}` : '';
+  }
+
+  getAvatarGradient(name: string): string {
+    const gradients = [
+      'linear-gradient(135deg,#1d4ed8,#3b82f6)',
+      'linear-gradient(135deg,#6d28d9,#8b5cf6)',
+      'linear-gradient(135deg,#047857,#10b981)',
+      'linear-gradient(135deg,#b45309,#f59e0b)',
+      'linear-gradient(135deg,#b91c1c,#ef4444)',
+      'linear-gradient(135deg,#0e7490,#06b6d4)',
+    ];
+    return gradients[name.charCodeAt(0) % gradients.length];
   }
 }

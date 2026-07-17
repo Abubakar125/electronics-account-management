@@ -2,13 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
@@ -19,7 +14,7 @@ import { Account } from '../../../models';
 @Component({
   selector: 'app-account-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule, MatButtonModule],
   templateUrl: './account-list.component.html',
   styleUrl: './account-list.component.scss',
 })
@@ -32,7 +27,11 @@ export class AccountListComponent implements OnInit {
   searchQuery = signal('');
   statusFilter = signal('');
 
-  displayedColumns = ['account_number', 'customer', 'product', 'total_price', 'remaining', 'monthly', 'due_date', 'status', 'actions'];
+  searchFocused = false;
+  statusModel = '';
+  pageSizeModel = 10;
+  min = Math.min;
+
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -61,7 +60,36 @@ export class AccountListComponent implements OnInit {
 
   onSearch(q: string) { this.searchQuery.set(q); this.searchSubject.next(q); }
   onStatusChange(s: string) { this.statusFilter.set(s); this.page.set(0); this.load(); }
-  onPage(e: PageEvent) { this.page.set(e.pageIndex); this.pageSize.set(e.pageSize); this.load(); }
+
+  countByStatus(status: string): number {
+    return this.accounts().filter(a => a.status === status).length;
+  }
+
+  get totalPages(): number { return Math.ceil(this.total() / this.pageSize()); }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.page();
+    const pages: number[] = [];
+    if (total <= 7) { for (let i = 0; i < total; i++) pages.push(i); }
+    else {
+      pages.push(0);
+      if (current > 2) pages.push(-1);
+      for (let i = Math.max(1, current - 1); i <= Math.min(total - 2, current + 1); i++) pages.push(i);
+      if (current < total - 3) pages.push(-1);
+      pages.push(total - 1);
+    }
+    return pages;
+  }
+
+  goToPage(p: number) {
+    if (p < 0 || p >= this.totalPages || p === this.page()) return;
+    this.page.set(p); this.load();
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSizeModel = size; this.pageSize.set(size); this.page.set(0); this.load();
+  }
 
   onDelete(account: Account) {
     this.dialog.open(ConfirmDialogComponent, {
@@ -76,7 +104,12 @@ export class AccountListComponent implements OnInit {
     });
   }
 
+  getAvatarGradient(name: string): string {
+    const g = ['linear-gradient(135deg,#1d4ed8,#3b82f6)', 'linear-gradient(135deg,#6d28d9,#8b5cf6)', 'linear-gradient(135deg,#047857,#10b981)', 'linear-gradient(135deg,#b45309,#f59e0b)', 'linear-gradient(135deg,#b91c1c,#ef4444)', 'linear-gradient(135deg,#0e7490,#06b6d4)'];
+    return g[(name || 'A').charCodeAt(0) % g.length];
+  }
+
   getStatusClass(s: string) { return 'badge badge-' + s; }
   formatCurrency(n: number) { return `PKR ${(n || 0).toLocaleString()}`; }
-  isOverdue(account: Account) { return account.due_date && new Date(account.due_date) < new Date() && account.status === 'active'; }
+  isOverdue(a: Account) { return a.due_date && new Date(a.due_date) < new Date() && a.status === 'active'; }
 }

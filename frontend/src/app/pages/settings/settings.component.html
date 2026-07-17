@@ -1,26 +1,54 @@
-<div class="page-container">
-  <div class="page-header">
-    <h1>Settings</h1>
-    <p class="subtitle">Configure your business information</p>
-  </div>
+<div class="page-wrap">
 
   @if (loading()) {
-    <div class="eims-card"><div class="skeleton" style="height: 400px; border-radius: 6px;"></div></div>
+    <div class="register-card">
+      <div class="left-panel">
+        <div class="left-icon"><mat-icon>settings</mat-icon></div>
+        <p class="left-eyebrow">Farhan Electronics</p>
+        <h2 class="left-title">Settings</h2>
+      </div>
+      <div class="right-panel">
+        <div class="skeleton-body">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton" style="height:52px; border-radius:10px;"></div>
+          }
+        </div>
+      </div>
+    </div>
   } @else {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="settings-grid">
-        <!-- Company Info -->
-        <div class="eims-card">
-          <h2 class="section-title">Company Information</h2>
-          <div class="fields-col">
-            <!-- Logo Upload -->
-            <div class="logo-upload">
-              <p class="field-label">Company Logo</p>
+      <div class="register-card">
+
+        <!-- ── Left Info Panel ── -->
+        <div class="left-panel">
+          <div class="left-icon">
+            <mat-icon>settings</mat-icon>
+          </div>
+          <p class="left-eyebrow">Farhan Electronics</p>
+          <h2 class="left-title">Settings</h2>
+          <p class="left-desc">
+            Configure your business profile, contact info, and receipt preferences.
+          </p>
+
+          <div class="left-checklist">
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Company name &amp; logo</div>
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Phone number</div>
+            <div class="check-item"><mat-icon>check_circle</mat-icon> Business address</div>
+          </div>
+        </div>
+
+        <!-- ── Right Form Panel ── -->
+        <div class="right-panel">
+          <div class="form-single-col">
+
+            <div class="field-group">
+              <label class="field-label">Company Logo</label>
               <div class="logo-box" (click)="logoInput.click()">
                 @if (logoPreview()) {
                   <img [src]="logoPreview()!" alt="Logo" class="logo-preview" />
+                  <div class="logo-overlay"><mat-icon>edit</mat-icon></div>
                 } @else {
-                  <div class="upload-placeholder">
+                  <div class="logo-placeholder">
                     <mat-icon>add_photo_alternate</mat-icon>
                     <span>Click to upload logo</span>
                   </div>
@@ -29,41 +57,48 @@
               <input #logoInput type="file" accept="image/*" hidden (change)="onLogoChange($event)" />
             </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Company Name</mat-label>
-              <input matInput formControlName="company_name" />
-            </mat-form-field>
+            <div class="row-2">
+              <div class="field-group">
+                <label class="field-label">Company Name</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="company_name" placeholder="e.g. Farhan Electronics" />
+                </mat-form-field>
+              </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Phone Number</mat-label>
-              <mat-icon matPrefix>phone</mat-icon>
-              <input matInput formControlName="phone" />
-            </mat-form-field>
+              <div class="field-group">
+                <label class="field-label">Phone Number</label>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="phone" placeholder="03XX-XXXXXXX" />
+                </mat-form-field>
+              </div>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Address</mat-label>
-              <textarea matInput formControlName="address" rows="3"></textarea>
-            </mat-form-field>
+            <div class="field-group">
+              <label class="field-label">Business Address</label>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <textarea matInput formControlName="address" rows="3" placeholder="Street, City, Area..."></textarea>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Currency Symbol</mat-label>
-              <input matInput formControlName="currency" placeholder="e.g. PKR, USD" />
-            </mat-form-field>
+          </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Receipt Footer Text</mat-label>
-              <textarea matInput formControlName="receipt_footer" rows="2" placeholder="Thank you for your business!"></textarea>
-            </mat-form-field>
+          <!-- Footer Actions -->
+          <div class="form-foot">
+            <p class="foot-hint">Changes apply immediately after saving.</p>
+            <button type="submit" class="submit-btn" [disabled]="saving()">
+              @if (saving()) {
+                <mat-icon class="spin">refresh</mat-icon>
+                Saving…
+              } @else {
+                Save Settings
+                <mat-icon class="arrow-icon">check</mat-icon>
+              }
+            </button>
           </div>
         </div>
-      </div>
 
-      <div class="form-actions">
-        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
-          @if (saving()) { <mat-icon class="spin">refresh</mat-icon> }
-          {{ saving() ? 'Saving...' : 'Save Settings' }}
-        </button>
       </div>
     </form>
   }
+
 </div>

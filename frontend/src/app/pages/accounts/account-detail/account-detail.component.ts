@@ -3,31 +3,26 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AccountService } from '../../../services/account.service';
-import { PaymentService } from '../../../services/payment.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { Account, Payment } from '../../../models';
 
 @Component({
   selector: 'app-account-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatIconModule, MatButtonModule, MatTableModule],
+  imports: [CommonModule, RouterLink, MatIconModule, MatButtonModule],
   templateUrl: './account-detail.component.html',
   styleUrl: './account-detail.component.scss',
 })
 export class AccountDetailComponent implements OnInit {
-  account = signal<Account | null>(null);
+  account  = signal<Account | null>(null);
   payments = signal<Payment[]>([]);
-  loading = signal(true);
-
-  paymentsColumns = ['receipt_no', 'date', 'amount', 'remaining', 'remarks', 'actions'];
+  loading  = signal(true);
 
   constructor(
     private accountService: AccountService,
-    private paymentService: PaymentService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
@@ -55,11 +50,7 @@ export class AccountDetailComponent implements OnInit {
     const a = this.account();
     if (!a) return 0;
     const paid = parseFloat(String(a.total_price)) - parseFloat(String(a.remaining));
-    return Math.round((paid / parseFloat(String(a.total_price))) * 100);
-  }
-
-  onOpenReceiptUrl(paymentId: number) {
-    window.open(this.paymentService.getReceiptUrl(paymentId), '_blank');
+    return Math.min(100, Math.round((paid / parseFloat(String(a.total_price))) * 100));
   }
 
   onDelete() {
@@ -77,6 +68,6 @@ export class AccountDetailComponent implements OnInit {
     });
   }
 
-  getStatusClass(s: string) { return 'badge badge-' + s; }
-  formatCurrency(n: number) { return `PKR ${(n || 0).toLocaleString()}`; }
+  getStatusClass(s: string) { return 'status-badge status-' + s; }
+  formatCurrency(n: number)  { return `PKR ${(n || 0).toLocaleString()}`; }
 }

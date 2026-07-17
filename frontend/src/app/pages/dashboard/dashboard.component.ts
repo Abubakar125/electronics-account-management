@@ -26,6 +26,15 @@ export class DashboardComponent implements OnInit {
 
   constructor(private reportService: ReportService) {}
 
+  get timeOfDay(): string {
+    const h = new Date().getHours();
+    return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  }
+
+  get todayLabel(): string {
+    return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  }
+
   ngOnInit() {
     this.loadDashboard();
   }

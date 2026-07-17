@@ -1,179 +1,176 @@
-<div class="dashboard">
-  <!-- Page header -->
-  <div class="page-header">
-    <div>
-      <h1>Dashboard</h1>
-      <p class="subtitle">Welcome to Farhan Electronics EIMS</p>
-    </div>
-    <div class="header-actions">
-      <a mat-stroked-button routerLink="/customers/new">
-        <mat-icon>person_add</mat-icon> New Customer
-      </a>
-      <a mat-flat-button color="primary" routerLink="/accounts/new">
-        <mat-icon>add</mat-icon> New Account
-      </a>
+<div class="dashboard-wrap">
+
+  <!-- ── Hero Banner ── -->
+  <div class="dash-hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-eyebrow">Farhan Electronics</p>
+        <h1 class="hero-title">Good {{ timeOfDay }}</h1>
+        <p class="hero-date">{{ todayLabel }}</p>
+      </div>
+      <div class="hero-actions">
+        <a routerLink="/customers/new" class="btn-ghost">
+          <mat-icon>person_add</mat-icon>
+          <span>New Customer</span>
+        </a>
+        <a routerLink="/accounts/new" class="btn-shine">
+          <mat-icon>add</mat-icon>
+          <span>New Account</span>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Stats Cards -->
+  <!-- ── Stats Grid (overlaps hero bottom) ── -->
   <div class="stats-grid">
-    <app-stats-card
-      title="Total Customers"
-      [value]="stats()?.totalCustomers ?? 0"
-      icon="people"
-      color="blue"
-      [loading]="loading()"
-    />
-    <app-stats-card
-      title="Active Accounts"
-      [value]="stats()?.activeAccounts ?? 0"
-      icon="account_balance_wallet"
-      color="purple"
-      [loading]="loading()"
-    />
-    <app-stats-card
-      title="Completed Accounts"
-      [value]="stats()?.completedAccounts ?? 0"
-      icon="check_circle"
-      color="green"
-      [loading]="loading()"
-    />
-    <app-stats-card
-      title="Outstanding Balance"
-      [value]="stats()?.outstanding ?? 0"
-      icon="account_balance"
-      color="red"
-      prefix="PKR "
-      [loading]="loading()"
-    />
-    <app-stats-card
-      title="Today's Collection"
-      [value]="stats()?.todayCollection ?? 0"
-      icon="today"
-      color="amber"
-      prefix="PKR "
-      [loading]="loading()"
-    />
-    <app-stats-card
-      title="Monthly Collection"
-      [value]="stats()?.monthlyCollection ?? 0"
-      icon="calendar_month"
-      color="green"
-      prefix="PKR "
-      [loading]="loading()"
-    />
+    <app-stats-card title="Total Customers"     [value]="stats()?.totalCustomers ?? 0"     icon="people"                  color="blue"   [loading]="loading()" />
+    <app-stats-card title="Active Accounts"     [value]="stats()?.activeAccounts ?? 0"     icon="account_balance_wallet"  color="purple" [loading]="loading()" />
+    <app-stats-card title="Completed"           [value]="stats()?.completedAccounts ?? 0"  icon="check_circle"            color="green"  [loading]="loading()" />
+    <app-stats-card title="Outstanding"         [value]="stats()?.outstanding ?? 0"        icon="account_balance"         color="red"    prefix="PKR " [loading]="loading()" />
+    <app-stats-card title="Today's Collection"  [value]="stats()?.todayCollection ?? 0"    icon="today"                   color="amber"  prefix="PKR " [loading]="loading()" />
+    <app-stats-card title="Monthly Collection"  [value]="stats()?.monthlyCollection ?? 0"  icon="calendar_month"          color="teal"   prefix="PKR " [loading]="loading()" />
   </div>
 
-  <div class="bottom-grid">
+  <!-- ── Mid Row ── -->
+  <div class="mid-grid">
+
     <!-- Recent Payments -->
-    <div class="eims-card">
-      <div class="section-header">
-        <h2>Recent Payments</h2>
-        <a mat-button routerLink="/payments">View All</a>
+    <div class="panel panel--blue">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-icon blue"><mat-icon>payments</mat-icon></div>
+          <div>
+            <h2 class="panel-title">Recent Payments</h2>
+            <p class="panel-sub">Latest 5 transactions</p>
+          </div>
+        </div>
+        <a routerLink="/payments" class="view-all-link">
+          View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
+        </a>
       </div>
 
       @if (loading()) {
-        <div class="skeleton-rows">
+        <div class="skeleton-list">
           @for (i of [1,2,3,4,5]; track i) {
-            <div class="skeleton" style="height: 44px; border-radius: 6px;"></div>
+            <div class="skeleton" style="height:56px; border-radius:12px;"></div>
           }
         </div>
       } @else if (!stats()?.recentPayments?.length) {
         <div class="empty-state">
-          <mat-icon>payments</mat-icon>
+          <div class="empty-icon-wrap"><mat-icon>payments</mat-icon></div>
           <p>No payments recorded yet</p>
         </div>
       } @else {
-        <table mat-table [dataSource]="stats()?.recentPayments || []" class="w-full">
-          <ng-container matColumnDef="receipt_no">
-            <th mat-header-cell *matHeaderCellDef>Receipt</th>
-            <td mat-cell *matCellDef="let p">
-              <span class="text-blue-600 font-medium text-sm">{{ p.receipt_no }}</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="customer">
-            <th mat-header-cell *matHeaderCellDef>Customer</th>
-            <td mat-cell *matCellDef="let p" class="text-sm">{{ p.account?.customer?.name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef>Amount</th>
-            <td mat-cell *matCellDef="let p">
-              <span class="font-semibold text-emerald-600 text-sm">PKR {{ p.amount | number }}</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef>Date</th>
-            <td mat-cell *matCellDef="let p" class="text-slate-500 text-sm">{{ p.payment_date | date:'dd MMM' }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="paymentsColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: paymentsColumns;" class="table-row"></tr>
-        </table>
+        <div class="payment-list">
+          @for (p of stats()?.recentPayments; track p.id) {
+            <div class="payment-row">
+              <div class="payment-avatar">{{ p.account?.customer?.name?.charAt(0) ?? 'P' }}</div>
+              <div class="payment-info">
+                <p class="payment-name">{{ p.account?.customer?.name }}</p>
+                <p class="payment-receipt">{{ p.receipt_no }}</p>
+              </div>
+              <div class="payment-right">
+                <p class="payment-amount">PKR {{ p.amount | number }}</p>
+                <p class="payment-date">{{ p.payment_date | date:'dd MMM' }}</p>
+              </div>
+            </div>
+          }
+        </div>
       }
     </div>
 
     <!-- Upcoming Due -->
-    <div class="eims-card">
-      <div class="section-header">
-        <h2>Upcoming Due (7 days)</h2>
-        <a mat-button routerLink="/accounts">View All</a>
+    <div class="panel panel--red">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-icon red"><mat-icon>schedule</mat-icon></div>
+          <div>
+            <h2 class="panel-title">Upcoming Due</h2>
+            <p class="panel-sub">Next 7 days</p>
+          </div>
+        </div>
+        <a routerLink="/accounts" class="view-all-link">
+          View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
+        </a>
       </div>
 
       @if (loading()) {
-        <div class="skeleton-rows">
+        <div class="skeleton-list">
           @for (i of [1,2,3]; track i) {
-            <div class="skeleton" style="height: 56px; border-radius: 6px;"></div>
+            <div class="skeleton" style="height:72px; border-radius:12px;"></div>
           }
         </div>
       } @else if (!stats()?.upcomingDue?.length) {
         <div class="empty-state">
-          <mat-icon>event_available</mat-icon>
+          <div class="empty-icon-wrap"><mat-icon>event_available</mat-icon></div>
           <p>No upcoming dues in next 7 days</p>
         </div>
       } @else {
-        @for (account of stats()?.upcomingDue; track account.id) {
-          <div class="due-item" [routerLink]="['/accounts', account.id]">
-            <div class="due-info">
-              <p class="due-account">{{ account.account_number }}</p>
-              <p class="due-customer">{{ account.customer?.name }}</p>
-              <p class="due-product text-slate-500 text-xs">{{ account.product_name }}</p>
-            </div>
-            <div class="due-right">
-              <p class="due-amount">PKR {{ account.monthly_installment | number }}</p>
-              <p class="due-date">{{ account.due_date | date:'dd MMM' }}</p>
-              <span [class]="getStatusClass(account.status)">{{ account.status }}</span>
-            </div>
-          </div>
-        }
+        <div class="due-list">
+          @for (account of stats()?.upcomingDue; track account.id) {
+            <a class="due-row" [routerLink]="['/accounts', account.id]">
+              <div class="due-icon-wrap">
+                <mat-icon>receipt_long</mat-icon>
+              </div>
+              <div class="due-info">
+                <p class="due-account-no">{{ account.account_number }}</p>
+                <p class="due-customer-name">{{ account.customer?.name }}</p>
+                <p class="due-product">{{ account.product_name }}</p>
+              </div>
+              <div class="due-right">
+                <p class="due-amount">PKR {{ account.monthly_installment | number }}</p>
+                <p class="due-date-label">{{ account.due_date | date:'dd MMM' }}</p>
+                <span [class]="getStatusClass(account.status)">{{ account.status }}</span>
+              </div>
+            </a>
+          }
+        </div>
       }
     </div>
+
   </div>
 
-  <!-- Recent Customers -->
-  <div class="eims-card mt-6">
-    <div class="section-header">
-      <h2>Recent Customers</h2>
-      <a mat-button routerLink="/customers">View All</a>
+  <!-- ── Recent Customers ── -->
+  <div class="panel panel--purple">
+    <div class="panel-header">
+      <div class="panel-title-group">
+        <div class="panel-icon purple"><mat-icon>people</mat-icon></div>
+        <div>
+          <h2 class="panel-title">Recent Customers</h2>
+          <p class="panel-sub">Latest registrations</p>
+        </div>
+      </div>
+      <a routerLink="/customers" class="view-all-link">
+        View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
+      </a>
     </div>
+
     @if (loading()) {
-      <div class="skeleton" style="height: 120px; border-radius: 6px;"></div>
+      <div class="customers-grid">
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="skeleton" style="height:84px; border-radius:16px;"></div>
+        }
+      </div>
     } @else if (!stats()?.recentCustomers?.length) {
       <div class="empty-state">
-        <mat-icon>people</mat-icon>
+        <div class="empty-icon-wrap"><mat-icon>people</mat-icon></div>
         <p>No customers added yet</p>
       </div>
     } @else {
       <div class="customers-grid">
         @for (c of stats()?.recentCustomers; track c.id) {
           <a [routerLink]="['/customers', c.id]" class="customer-card">
-            <div class="customer-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
-            <div>
-              <p class="customer-name">{{ c.name }}</p>
-              <p class="customer-code">{{ c.customer_code }}</p>
-              <p class="customer-phone text-slate-500 text-xs">{{ c.phone1 }}</p>
+            <div class="cust-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
+            <div class="cust-info">
+              <p class="cust-name">{{ c.name }}</p>
+              <p class="cust-code">{{ c.customer_code }}</p>
+              <p class="cust-phone">{{ c.phone1 }}</p>
             </div>
+            <mat-icon class="cust-arrow">chevron_right</mat-icon>
           </a>
         }
       </div>
     }
   </div>
+
 </div>

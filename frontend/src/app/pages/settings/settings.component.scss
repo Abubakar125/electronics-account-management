@@ -1,17 +1,340 @@
-.page-container { max-width: 700px; margin: 0 auto; }
-.page-header { margin-bottom: 24px; h1 { font-size: 26px; font-weight: 700; color: #0f172a; margin: 0 0 4px; } .subtitle { color: #64748b; margin: 0; font-size: 14px; } }
-.settings-grid { display: grid; gap: 20px; margin-bottom: 20px; }
-.section-title { font-size: 15px; font-weight: 600; color: #1e40af; margin: 0 0 16px; border-bottom: 2px solid #dbeafe; padding-bottom: 8px; }
-.fields-col { display: flex; flex-direction: column; gap: 4px; }
-.field-label { font-size: 13px; font-weight: 500; color: #475569; margin: 0 0 6px; }
-.logo-upload { margin-bottom: 16px; }
-.logo-box {
-  width: 200px; height: 100px; border: 2px dashed #cbd5e1; border-radius: 10px;
-  cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
-  background: #f8fafc; transition: border-color 0.15s; &:hover { border-color: #3b82f6; }
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+// ── Design tokens ──────────────────────────────────────────
+$font:       'Plus Jakarta Sans', sans-serif;
+$dark:       #0F172A;
+$blue:       #2563EB;
+$blue-light: #93C5FD;
+$text:       #0F172A;
+$muted:      #64748B;
+$red:        #EF4444;
+
+// ── MDC field overrides ─────────────────────────────────────
+.page-wrap {
+  --mdc-outlined-text-field-container-shape:              10px;
+  --mdc-outlined-text-field-outline-color:                #E2E8F0;
+  --mdc-outlined-text-field-hover-outline-color:          #94A3B8;
+  --mdc-outlined-text-field-focus-outline-color:          #{$blue};
+  --mdc-outlined-text-field-error-outline-color:          #{$red};
+  --mdc-outlined-text-field-input-text-color:             #{$text};
+  --mdc-outlined-text-field-input-text-placeholder-color: #CBD5E1;
+  --mdc-outlined-text-field-caret-color:                  #{$blue};
+  --mdc-outlined-text-field-input-text-font:              #{$font};
+  --mdc-outlined-text-field-input-text-size:              14px;
+  --mdc-outlined-text-field-hint-text-color:              #94A3B8;
+  --mat-form-field-error-text-color:                      #{$red};
 }
-.upload-placeholder { text-align: center; color: #94a3b8; mat-icon { font-size: 28px; display: block; margin-bottom: 6px; } span { font-size: 12px; } }
-.logo-preview { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
-.form-actions { display: flex; justify-content: flex-end; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.spin { animation: spin 1s linear infinite; }
+
+// ── Page wrapper ────────────────────────────────────────────
+.page-wrap {
+  font-family: $font;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-bottom: 40px;
+}
+
+// ── Card shell ──────────────────────────────────────────────
+.register-card {
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.06),
+    0 6px 28px rgba(0,0,0,0.09);
+  animation: cardEnter 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (max-width: 780px) { flex-direction: column; }
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Left dark panel ─────────────────────────────────────────
+.left-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: $dark;
+  padding: 36px 26px 32px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    right: -80px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,0.32) 0%, transparent 68%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 780px) {
+    width: 100%;
+    padding: 26px 22px;
+    .left-checklist { display: none; }
+  }
+}
+
+.left-icon {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  background: rgba(37,99,235,0.18);
+  border: 1px solid rgba(37,99,235,0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  mat-icon { font-size: 22px; width: 22px; height: 22px; color: $blue-light; }
+}
+
+.left-eyebrow {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 6px;
+  font-family: $font;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: $blue;
+}
+
+.left-title {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 10px;
+  font-family: $font;
+  font-size: 20px;
+  font-weight: 800;
+  color: #F8FAFC;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+
+.left-desc {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 28px;
+  font-family: $font;
+  font-size: 12px;
+  color: #94A3B8;
+  line-height: 1.65;
+}
+
+.left-checklist {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: auto;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: $font;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #CBD5E1;
+
+  mat-icon { font-size: 13px; width: 13px; height: 13px; color: #22C55E; flex-shrink: 0; }
+}
+
+// ── Right panel ─────────────────────────────────────────────
+.right-panel {
+  flex: 1;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// ── Single-column layout ─────────────────────────────────────
+.form-single-col {
+  flex: 1;
+  padding: 28px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: fieldsEnter 0.4s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fieldsEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @media (max-width: 540px) { grid-template-columns: 1fr; }
+}
+
+// ── Field helpers ────────────────────────────────────────────
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.field-label {
+  font-family: $font;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+mat-form-field { width: 100%; }
+
+// ── Logo upload ──────────────────────────────────────────────
+.logo-box {
+  width: 200px;
+  height: 96px;
+  border: 2px dashed #E2E8F0;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8FAFC;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: $blue;
+    background: #EFF6FF;
+
+    .logo-overlay { opacity: 1; }
+  }
+}
+
+.logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #CBD5E1;
+
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
+  span { font-family: $font; font-size: 11px; font-weight: 500; }
+}
+
+.logo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+.logo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(37,99,235,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  mat-icon { font-size: 22px; width: 22px; height: 22px; color: $blue; }
+}
+
+// ── Footer ───────────────────────────────────────────────────
+.form-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px 24px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.foot-hint {
+  margin: 0;
+  font-family: $font;
+  font-size: 12px;
+  color: #CBD5E1;
+}
+
+.submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 11px;
+  border: none;
+  background: $dark;
+  color: #FFF;
+  font-family: $font;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.12s;
+
+  .arrow-icon { font-size: 17px; width: 17px; height: 17px; transition: transform 0.15s; }
+  mat-icon    { font-size: 17px; width: 17px; height: 17px; }
+
+  &:hover:not([disabled]) {
+    background: $blue;
+    box-shadow: 0 4px 18px rgba(37,99,235,0.38);
+    .arrow-icon { transform: scale(1.2); }
+  }
+
+  &:active:not([disabled]) { transform: scale(0.97); }
+  &[disabled] { opacity: 0.38; cursor: not-allowed; }
+}
+
+// ── Skeleton ─────────────────────────────────────────────────
+.skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 32px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8EDF2 50%, #F1F5F9 75%);
+  background-size: 300% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spin { animation: spin 0.8s linear infinite; }

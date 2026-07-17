@@ -1,79 +1,143 @@
-<div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1>Payments</h1>
-      <p class="subtitle">All payment records</p>
+<div class="page-wrap">
+
+  <div class="page-top">
+    <div class="page-title-wrap">
+      <div class="page-icon"><mat-icon>payments</mat-icon></div>
+      <div>
+        <h1 class="page-title">Payments</h1>
+        <p class="page-sub">{{ total() }} total payment records</p>
+      </div>
     </div>
-    <a mat-flat-button color="primary" routerLink="/payments/new">
+    <a mat-flat-button routerLink="/payments/new" class="add-btn">
       <mat-icon>add</mat-icon> Record Payment
     </a>
   </div>
 
-  <div class="eims-card mb-4 filters-bar">
-    <span class="filter-label">Filter by date:</span>
-    <input type="date" [(ngModel)]="dateFrom" (ngModelChange)="dateFrom.set($event); onFilter()" class="date-input" placeholder="From" />
-    <span>to</span>
-    <input type="date" [(ngModel)]="dateTo" (ngModelChange)="dateTo.set($event); onFilter()" class="date-input" placeholder="To" />
-    <button mat-stroked-button (click)="dateFrom.set(''); dateTo.set(''); onFilter()">Clear</button>
+  <!-- Stats Strip -->
+  <div class="stats-strip">
+    <div class="strip-item">
+      <div class="strip-icon blue"><mat-icon>receipt_long</mat-icon></div>
+      <div><p class="strip-val">{{ total() }}</p><p class="strip-lbl">Total Payments</p></div>
+    </div>
+    <div class="strip-divider"></div>
+    <div class="strip-item">
+      <div class="strip-icon green"><mat-icon>payments</mat-icon></div>
+      <div><p class="strip-val">{{ formatCurrency(todayTotal()) }}</p><p class="strip-lbl">Today</p></div>
+    </div>
+    <div class="strip-divider"></div>
+    <div class="strip-item">
+      <div class="strip-icon teal"><mat-icon>calendar_month</mat-icon></div>
+      <div><p class="strip-val">{{ formatCurrency(monthTotal()) }}</p><p class="strip-lbl">This Month</p></div>
+    </div>
   </div>
 
-  <div class="eims-table-container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <span class="filter-label">Date Range</span>
+    <input type="date" [(ngModel)]="dateFromModel" (ngModelChange)="dateFrom.set($event); onFilter()" class="date-input" />
+    <span class="sep">→</span>
+    <input type="date" [(ngModel)]="dateToModel" (ngModelChange)="dateTo.set($event); onFilter()" class="date-input" />
+    <button class="clear-dates-btn" (click)="clearDates()">Clear</button>
+    <span class="result-count">{{ payments().length }} results</span>
+  </div>
+
+  <!-- Table Panel -->
+  <div class="table-panel">
     @if (loading()) {
-      <div class="p-4">@for (i of [1,2,3,4,5]; track i) { <div class="skeleton" style="height: 48px; margin-bottom: 4px; border-radius: 4px;"></div> }</div>
+      <div class="skeleton-wrap">
+        <div class="skeleton-header"></div>
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="skeleton-row">
+            <div class="skeleton sk-pill"></div>
+            <div class="sk-lines"><div class="skeleton sk-line-lg"></div></div>
+            <div class="sk-lines"><div class="skeleton sk-line-lg"></div><div class="skeleton sk-line-sm"></div></div>
+            <div class="skeleton sk-line-md"></div>
+            <div class="skeleton sk-line-md"></div>
+            <div class="skeleton sk-line-md"></div>
+            <div class="skeleton sk-line-sm"></div>
+          </div>
+        }
+      </div>
     } @else if (!payments().length) {
       <div class="empty-state">
-        <mat-icon>receipt_long</mat-icon>
+        <div class="empty-icon-wrap"><mat-icon>receipt_long</mat-icon></div>
         <h3>No payments found</h3>
         <p>No payment records match the current filter.</p>
       </div>
     } @else {
-      <table mat-table [dataSource]="payments()" class="w-full">
-        <ng-container matColumnDef="receipt_no">
-          <th mat-header-cell *matHeaderCellDef>Receipt No</th>
-          <td mat-cell *matCellDef="let p"><span class="receipt-no">{{ p.receipt_no }}</span></td>
-        </ng-container>
-        <ng-container matColumnDef="customer">
-          <th mat-header-cell *matHeaderCellDef>Customer</th>
-          <td mat-cell *matCellDef="let p">
-            <a [routerLink]="['/customers', p.account?.customer?.id]" class="cust-link">{{ p.account?.customer?.name }}</a>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="account">
-          <th mat-header-cell *matHeaderCellDef>Account</th>
-          <td mat-cell *matCellDef="let p">
-            <div>
-              <p class="acc-no-sm">{{ p.account?.account_number }}</p>
-              <p class="prod-name-sm text-slate-500">{{ p.account?.product_name }}</p>
+      <div class="tbl-header">
+        <div class="col-receipt">Receipt No</div>
+        <div class="col-customer">Customer</div>
+        <div class="col-account">Account</div>
+        <div class="col-amount">Amount</div>
+        <div class="col-balance">Balance After</div>
+        <div class="col-date">Date</div>
+        <div class="col-remarks">Remarks</div>
+      </div>
+
+      <div class="tbl-body">
+        @for (p of payments(); track p.id) {
+          <div class="tbl-row">
+
+            <div class="col-receipt">
+              <span class="receipt-pill">{{ p.receipt_no }}</span>
             </div>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="amount">
-          <th mat-header-cell *matHeaderCellDef>Amount</th>
-          <td mat-cell *matCellDef="let p"><span class="amount-green">{{ formatCurrency(p.amount) }}</span></td>
-        </ng-container>
-        <ng-container matColumnDef="balance">
-          <th mat-header-cell *matHeaderCellDef>Balance After</th>
-          <td mat-cell *matCellDef="let p" class="text-sm text-slate-600">{{ formatCurrency(p.remaining_balance) }}</td>
-        </ng-container>
-        <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef>Date</th>
-          <td mat-cell *matCellDef="let p" class="text-sm text-slate-500">{{ p.payment_date | date:'dd MMM yyyy' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="remarks">
-          <th mat-header-cell *matHeaderCellDef>Remarks</th>
-          <td mat-cell *matCellDef="let p" class="text-sm text-slate-500">{{ p.remarks || '-' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let p">
-            <button mat-icon-button (click)="openReceipt(p.id)" title="Print Receipt"><mat-icon>print</mat-icon></button>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <mat-paginator [length]="total()" [pageIndex]="page()" [pageSize]="pageSize()"
-        [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)" showFirstLastButtons />
+
+            <div class="col-customer">
+              <div class="cust-avatar" [style.background]="getAvatarGradient(p.account?.customer?.name || 'P')">
+                {{ p.account?.customer?.name?.charAt(0)?.toUpperCase() }}
+              </div>
+              <a [routerLink]="['/customers', p.account?.customer?.id]" class="cust-name" (click)="$event.stopPropagation()">
+                {{ p.account?.customer?.name }}
+              </a>
+            </div>
+
+            <div class="col-account">
+              <p class="acc-no">{{ p.account?.account_number }}</p>
+              <p class="prod-name">{{ p.account?.product_name }}</p>
+            </div>
+
+            <div class="col-amount">
+              <span class="amount-green">{{ formatCurrency(p.amount) }}</span>
+            </div>
+
+            <div class="col-balance">
+              <span class="balance-text">{{ formatCurrency(p.remaining_balance) }}</span>
+            </div>
+
+            <div class="col-date">
+              <span class="date-text">{{ p.payment_date | date:'dd MMM yyyy' }}</span>
+            </div>
+
+            <div class="col-remarks">
+              <span class="remarks-text">{{ p.remarks || '—' }}</span>
+            </div>
+
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      <div class="paginator-wrap">
+        <div class="page-info">
+          Showing <strong>{{ page() * pageSize() + 1 }}</strong> – <strong>{{ min((page() + 1) * pageSize(), total()) }}</strong> of <strong>{{ total() }}</strong> payments
+        </div>
+        <div class="page-controls">
+          <select class="page-size-select" [(ngModel)]="pageSizeModel" (ngModelChange)="onPageSizeChange($event)">
+            <option [ngValue]="10">10 / page</option>
+            <option [ngValue]="25">25 / page</option>
+            <option [ngValue]="50">50 / page</option>
+          </select>
+          <button class="pg-btn" (click)="goToPage(0)" [disabled]="page() === 0"><mat-icon>first_page</mat-icon></button>
+          <button class="pg-btn" (click)="goToPage(page() - 1)" [disabled]="page() === 0"><mat-icon>chevron_left</mat-icon></button>
+          @for (p of pageNumbers; track p) {
+            @if (p === -1) { <span class="pg-dots">···</span> }
+            @else { <button class="pg-btn" [class.active]="p === page()" (click)="goToPage(p)">{{ p + 1 }}</button> }
+          }
+          <button class="pg-btn" (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages - 1"><mat-icon>chevron_right</mat-icon></button>
+          <button class="pg-btn" (click)="goToPage(totalPages - 1)" [disabled]="page() >= totalPages - 1"><mat-icon>last_page</mat-icon></button>
+        </div>
+      </div>
     }
   </div>
 </div>

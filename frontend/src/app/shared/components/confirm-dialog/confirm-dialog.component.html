@@ -1,22 +1,29 @@
-<div class="dialog-container">
-  <div class="dialog-icon" [class]="'icon--' + (data.type || 'danger')">
-    <mat-icon>
-      {{ data.type === 'info' ? 'info' : data.type === 'warning' ? 'warning' : 'delete_forever' }}
-    </mat-icon>
+<div class="dialog-wrapper">
+
+  <!-- Colored top banner -->
+  <!-- <div class="dialog-banner" [class]="'banner--' + (data.type || 'danger')">
+    <div class="banner-icon">
+      <mat-icon>{{ data.type === 'info' ? 'info' : data.type === 'warning' ? 'warning_amber' : 'delete_forever' }}</mat-icon>
+    </div>
+    <button class="close-btn" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div> -->
+
+  <!-- Body -->
+  <div class="dialog-body">
+    <h2 class="dialog-title">{{ data.title }}</h2>
+    <p class="dialog-message">{{ data.message }}</p>
+
+    <div class="dialog-actions">
+      <button class="btn-cancel" (click)="onCancel()">
+        {{ data.cancelText || 'Cancel' }}
+      </button>
+      <button class="btn-confirm" [class]="'btn--' + (data.type || 'danger')" (click)="onConfirm()">
+        <mat-icon>{{ data.type === 'info' ? 'check_circle' : data.type === 'warning' ? 'warning_amber' : 'delete' }}</mat-icon>
+        {{ data.confirmText || 'Delete' }}
+      </button>
+    </div>
   </div>
 
-  <h2 mat-dialog-title class="dialog-title">{{ data.title }}</h2>
-
-  <mat-dialog-content class="dialog-message">
-    <p>{{ data.message }}</p>
-  </mat-dialog-content>
-
-  <mat-dialog-actions class="dialog-actions">
-    <button mat-stroked-button (click)="onCancel()">
-      {{ data.cancelText || 'Cancel' }}
-    </button>
-    <button mat-flat-button [class]="'btn--' + (data.type || 'danger')" (click)="onConfirm()">
-      {{ data.confirmText || 'Delete' }}
-    </button>
-  </mat-dialog-actions>
 </div>
