@@ -302,7 +302,17 @@ $font: 'Plus Jakarta Sans', sans-serif;
     position: fixed;
     z-index: 100;
     height: 100%;
+    transform: translateX(0);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
-    &:not(.open) { width: 0; }
+    &:not(.open) {
+      width: 0;
+      transform: translateX(-100%);
+    }
+
+    &.open {
+      width: 252px;
+      transform: translateX(0);
+    }
   }
 }

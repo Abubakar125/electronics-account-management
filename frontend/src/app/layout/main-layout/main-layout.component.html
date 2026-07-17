@@ -1,5 +1,8 @@
 <div class="layout-wrapper" [class.sidebar-collapsed]="!sidebarOpen()">
-  <app-sidebar [open]="sidebarOpen()" (toggleSidebar)="toggleSidebar()" />
+  @if (sidebarOpen() && isMobile()) {
+    <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
+  }
+  <app-sidebar [open]="sidebarOpen()" (toggleSidebar)="toggleSidebar()" (navClick)="onNavClick()" />
   <div class="content-area">
     <app-navbar (toggleSidebar)="toggleSidebar()" />
     <main class="main-content">

@@ -34,6 +34,9 @@ $muted:  #64748B;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 14px;
+
+  @media (max-width: 768px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
 }
 .sk-stat  { height: 90px; border-radius: 16px; }
 .sk-panel { height: 340px; }
@@ -116,6 +119,8 @@ $muted:  #64748B;
   gap: 20px;
   padding: 28px 32px 20px;
   flex-wrap: wrap;
+
+  @media (max-width: 600px) { padding: 20px 18px 16px; }
 }
 
 .hero-profile {
@@ -248,6 +253,8 @@ $muted:  #64748B;
   padding: 0 32px 24px;
   border-top: 1px solid rgba(255,255,255,0.06);
   padding-top: 18px;
+
+  @media (max-width: 600px) { padding: 14px 18px 18px; }
 }
 
 .hero-chip {
@@ -421,6 +428,8 @@ $muted:  #64748B;
 .tab-body {
   padding: 24px;
   animation: fadeUp 0.28s cubic-bezier(0.22,1,0.36,1) both;
+
+  @media (max-width: 480px) { padding: 16px; }
 }
 
 // ── Accounts List ────────────────────────────────────────

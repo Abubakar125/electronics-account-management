@@ -21,6 +21,7 @@ interface NavItem {
 export class SidebarComponent {
   @Input() open = true;
   @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() navClick = new EventEmitter<void>();
 
   navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
@@ -35,5 +36,9 @@ export class SidebarComponent {
 
   onToggle() {
     this.toggleSidebar.emit();
+  }
+
+  onNavClick() {
+    this.navClick.emit();
   }
 }

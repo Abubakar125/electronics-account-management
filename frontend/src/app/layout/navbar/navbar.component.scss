@@ -89,6 +89,8 @@ $border: #E8EDF3;
   flex: 1;
   max-width: 460px;
   margin: 0 auto;
+
+  @media (max-width: 600px) { display: none; }
 }
 
 .search-wrap {

@@ -27,6 +27,7 @@
         class="nav-item"
         [matTooltip]="!open ? item.label : ''"
         matTooltipPosition="right"
+        (click)="onNavClick()"
       >
         <div class="nav-icon-wrap">
           <mat-icon>{{ item.icon }}</mat-icon>

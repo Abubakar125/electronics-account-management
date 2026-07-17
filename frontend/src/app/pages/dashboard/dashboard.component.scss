@@ -26,6 +26,9 @@ $text:  #0F172A;
   overflow: hidden;
   animation: heroIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 
+  @media (max-width: 768px) { padding: 24px 20px 60px; border-radius: 16px; }
+  @media (max-width: 480px) { padding: 20px 16px 54px; }
+
   // dot-grid pattern (matches form left panels)
   &::before {
     content: '';
@@ -99,6 +102,12 @@ $text:  #0F172A;
   align-items: center;
   flex-shrink: 0;
   padding-top: 8px;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding-top: 4px;
+    .btn-ghost, .btn-shine { flex: 1; justify-content: center; }
+  }
 }
 
 .btn-ghost {
@@ -162,8 +171,8 @@ $text:  #0F172A;
   animation: statsIn 0.5s 0.14s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); margin-top: -38px; }
-  @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); margin-top: 0; }
-  @media (max-width: 480px)  { grid-template-columns: 1fr; }
+  @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); margin-top: 0; gap: 10px; }
+  @media (max-width: 480px)  { grid-template-columns: 1fr 1fr; gap: 8px; }
 }
 
 @keyframes statsIn {
@@ -179,6 +188,8 @@ $text:  #0F172A;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 22px rgba(0,0,0,0.05);
   border-top: 3px solid transparent;
   animation: panelIn 0.45s 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (max-width: 480px) { padding: 18px 16px; border-radius: 16px; }
 
   &--blue   { border-top-color: #3B82F6; }
   &--red    { border-top-color: #EF4444; }
@@ -418,6 +429,8 @@ $text:  #0F172A;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 14px;
+
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
 
 .customer-card {

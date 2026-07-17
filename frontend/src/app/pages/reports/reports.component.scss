@@ -78,6 +78,9 @@ $muted: #64748B;
   padding: 20px 24px 0;
   border-bottom: 1px solid #F1F5F9;
   background: #FAFAFA;
+  overflow-x: auto;
+
+  @media (max-width: 600px) { padding: 14px 16px 0; }
 }
 
 .tab-nav {
@@ -86,6 +89,7 @@ $muted: #64748B;
   background: #F1F5F9;
   padding: 4px;
   border-radius: 13px;
+  white-space: nowrap;
 }
 
 .tab-btn {
@@ -106,6 +110,12 @@ $muted: #64748B;
   white-space: nowrap;
 
   mat-icon { font-size: 16px; width: 16px; height: 16px; transition: color 0.18s; }
+
+  @media (max-width: 480px) {
+    padding: 0 12px;
+    font-size: 12px;
+    gap: 5px;
+  }
 
   &:hover:not(.active) {
     background: white;
@@ -128,6 +138,8 @@ $muted: #64748B;
   flex-direction: column;
   gap: 20px;
   animation: fadeUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+
+  @media (max-width: 480px) { padding: 16px; }
 }
 
 // ── Summary Strip ─────────────────────────────────────────
@@ -194,6 +206,11 @@ $muted: #64748B;
   align-items: flex-end;
   gap: 16px;
   flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    .filter-group { flex-direction: column; align-items: stretch; }
+    .filter-select, .date-input { width: 100%; }
+  }
 }
 
 .filter-group {
@@ -315,6 +332,8 @@ $muted: #64748B;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #F1F5F9;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 // Angular Material table overrides
