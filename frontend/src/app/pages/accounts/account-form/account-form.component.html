@@ -1,0 +1,119 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <a mat-icon-button routerLink="/accounts"><mat-icon>arrow_back</mat-icon></a>
+      <h1>{{ isEdit() ? 'Edit Account' : 'New Installment Account' }}</h1>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="eims-card"><div class="skeleton" style="height: 400px; border-radius: 6px;"></div></div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <!-- Customer & Product -->
+        <div class="eims-card">
+          <h2 class="section-title">Customer & Product</h2>
+          <div class="fields-col">
+            <mat-form-field appearance="outline">
+              <mat-label>Customer *</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-select formControlName="customer_id">
+                @for (c of customers(); track c.id) {
+                  <mat-option [value]="c.id">{{ c.name }} ({{ c.customer_code }}) - {{ c.phone1 }}</mat-option>
+                }
+              </mat-select>
+              @if (form.get('customer_id')?.hasError('required') && form.get('customer_id')?.touched) {
+                <mat-error>Customer is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Product Name *</mat-label>
+              <input matInput formControlName="product_name" placeholder="e.g. LED TV, Refrigerator" />
+              @if (form.get('product_name')?.hasError('required') && form.get('product_name')?.touched) {
+                <mat-error>Product name is required</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="two-col">
+              <mat-form-field appearance="outline">
+                <mat-label>Brand</mat-label>
+                <input matInput formControlName="brand" placeholder="e.g. Samsung, Haier" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Model</mat-label>
+                <input matInput formControlName="model" />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="eims-card">
+          <h2 class="section-title">Pricing & Installment</h2>
+          <div class="fields-col">
+            <div class="two-col">
+              <mat-form-field appearance="outline">
+                <mat-label>Total Price *</mat-label>
+                <mat-icon matPrefix>payments</mat-icon>
+                <input matInput type="number" formControlName="total_price" />
+                @if (form.get('total_price')?.hasError('required') && form.get('total_price')?.touched) {
+                  <mat-error>Total price is required</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Advance Payment</mat-label>
+                <mat-icon matPrefix>payments</mat-icon>
+                <input matInput type="number" formControlName="advance" />
+              </mat-form-field>
+            </div>
+
+            <!-- Remaining Preview -->
+            @if (form.value.total_price) {
+              <div class="remaining-preview">
+                <span>Remaining after advance:</span>
+                <strong class="text-blue-600">PKR {{ remaining | number }}</strong>
+              </div>
+            }
+
+            <div class="two-col">
+              <mat-form-field appearance="outline">
+                <mat-label>Monthly Installment *</mat-label>
+                <input matInput type="number" formControlName="monthly_installment" />
+                @if (form.get('monthly_installment')?.hasError('required') && form.get('monthly_installment')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Duration (Months) *</mat-label>
+                <input matInput type="number" formControlName="duration" />
+                @if (form.get('duration')?.hasError('required') && form.get('duration')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="two-col">
+              <mat-form-field appearance="outline">
+                <mat-label>Purchase Date *</mat-label>
+                <input matInput type="date" formControlName="purchase_date" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>First Due Date</mat-label>
+                <input matInput type="date" formControlName="due_date" />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a mat-stroked-button routerLink="/accounts">Cancel</a>
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : (isEdit() ? 'Update Account' : 'Create Account') }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

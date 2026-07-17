@@ -1,0 +1,79 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Payments</h1>
+      <p class="subtitle">All payment records</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/payments/new">
+      <mat-icon>add</mat-icon> Record Payment
+    </a>
+  </div>
+
+  <div class="eims-card mb-4 filters-bar">
+    <span class="filter-label">Filter by date:</span>
+    <input type="date" [(ngModel)]="dateFrom" (ngModelChange)="dateFrom.set($event); onFilter()" class="date-input" placeholder="From" />
+    <span>to</span>
+    <input type="date" [(ngModel)]="dateTo" (ngModelChange)="dateTo.set($event); onFilter()" class="date-input" placeholder="To" />
+    <button mat-stroked-button (click)="dateFrom.set(''); dateTo.set(''); onFilter()">Clear</button>
+  </div>
+
+  <div class="eims-table-container">
+    @if (loading()) {
+      <div class="p-4">@for (i of [1,2,3,4,5]; track i) { <div class="skeleton" style="height: 48px; margin-bottom: 4px; border-radius: 4px;"></div> }</div>
+    } @else if (!payments().length) {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <h3>No payments found</h3>
+        <p>No payment records match the current filter.</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="payments()" class="w-full">
+        <ng-container matColumnDef="receipt_no">
+          <th mat-header-cell *matHeaderCellDef>Receipt No</th>
+          <td mat-cell *matCellDef="let p"><span class="receipt-no">{{ p.receipt_no }}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef>Customer</th>
+          <td mat-cell *matCellDef="let p">
+            <a [routerLink]="['/customers', p.account?.customer?.id]" class="cust-link">{{ p.account?.customer?.name }}</a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="account">
+          <th mat-header-cell *matHeaderCellDef>Account</th>
+          <td mat-cell *matCellDef="let p">
+            <div>
+              <p class="acc-no-sm">{{ p.account?.account_number }}</p>
+              <p class="prod-name-sm text-slate-500">{{ p.account?.product_name }}</p>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let p"><span class="amount-green">{{ formatCurrency(p.amount) }}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef>Balance After</th>
+          <td mat-cell *matCellDef="let p" class="text-sm text-slate-600">{{ formatCurrency(p.remaining_balance) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let p" class="text-sm text-slate-500">{{ p.payment_date | date:'dd MMM yyyy' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="remarks">
+          <th mat-header-cell *matHeaderCellDef>Remarks</th>
+          <td mat-cell *matCellDef="let p" class="text-sm text-slate-500">{{ p.remarks || '-' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let p">
+            <button mat-icon-button (click)="openReceipt(p.id)" title="Print Receipt"><mat-icon>print</mat-icon></button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator [length]="total()" [pageIndex]="page()" [pageSize]="pageSize()"
+        [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)" showFirstLastButtons />
+    }
+  </div>
+</div>

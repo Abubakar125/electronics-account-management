@@ -1,0 +1,22 @@
+<div class="dialog-container">
+  <div class="dialog-icon" [class]="'icon--' + (data.type || 'danger')">
+    <mat-icon>
+      {{ data.type === 'info' ? 'info' : data.type === 'warning' ? 'warning' : 'delete_forever' }}
+    </mat-icon>
+  </div>
+
+  <h2 mat-dialog-title class="dialog-title">{{ data.title }}</h2>
+
+  <mat-dialog-content class="dialog-message">
+    <p>{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-stroked-button (click)="onCancel()">
+      {{ data.cancelText || 'Cancel' }}
+    </button>
+    <button mat-flat-button [class]="'btn--' + (data.type || 'danger')" (click)="onConfirm()">
+      {{ data.confirmText || 'Delete' }}
+    </button>
+  </mat-dialog-actions>
+</div>

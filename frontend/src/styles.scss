@@ -1,0 +1,118 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Angular Material custom theme
+@include mat.core();
+
+$primary-palette: mat.m2-define-palette(mat.$m2-blue-palette, 700, 400, 900);
+$accent-palette: mat.m2-define-palette(mat.$m2-green-palette, 600);
+$warn-palette: mat.m2-define-palette(mat.$m2-red-palette);
+
+$light-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  ),
+  typography: mat.m2-define-typography-config($font-family: 'Inter, Roboto, sans-serif'),
+  density: 0,
+));
+
+$dark-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  ),
+));
+
+@include mat.all-component-themes($light-theme);
+
+.dark-mode {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// Global resets & base styles
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.dark-mode body, .dark-mode {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+// Scrollbar
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+// Status badge utilities
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+}
+.badge-active { @apply bg-blue-100 text-blue-800; }
+.badge-completed { @apply bg-emerald-100 text-emerald-800; }
+.badge-overdue { @apply bg-red-100 text-red-800; }
+.badge-cancelled { @apply bg-gray-100 text-gray-600; }
+
+// Card
+.eims-card {
+  @apply bg-white rounded-xl shadow-card p-6;
+  transition: box-shadow 0.2s ease;
+  &:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+}
+
+.dark-mode .eims-card {
+  @apply bg-slate-800;
+}
+
+// Table
+.eims-table-container {
+  @apply bg-white rounded-xl shadow-card overflow-hidden;
+}
+
+// Page header
+.page-header {
+  @apply flex items-center justify-between mb-6;
+  h1 { @apply text-2xl font-bold text-slate-800 m-0; }
+}
+
+// Material overrides
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-snack-bar-container {
+  &.success-snack { --mdc-snackbar-container-color: #059669; }
+  &.error-snack   { --mdc-snackbar-container-color: #dc2626; }
+  &.info-snack    { --mdc-snackbar-container-color: #2563eb; }
+}
+
+// Skeleton loader animation
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}

@@ -1,0 +1,64 @@
+<div class="login-page">
+  <div class="login-bg"></div>
+
+  <div class="login-container">
+    <!-- Logo -->
+    <div class="login-logo">
+      <div class="logo-circle">
+        <mat-icon>bolt</mat-icon>
+      </div>
+      <h1 class="company-name">Farhan Electronics</h1>
+      <p class="company-sub">Installment Management System</p>
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+      <h2 class="card-title">Welcome Back</h2>
+      <p class="card-sub">Sign in to your administrator account</p>
+
+      @if (errorMessage()) {
+        <div class="error-alert">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" autocomplete="username" />
+          <mat-icon matPrefix>person</mat-icon>
+          @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
+            <mat-error>Username is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" autocomplete="current-password" />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <mat-error>Password is required</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-footer">
+          <mat-checkbox formControlName="rememberMe" color="primary">Remember Me</mat-checkbox>
+        </div>
+
+        <button mat-flat-button color="primary" type="submit" class="login-btn" [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <ng-container><mat-icon class="spin">refresh</mat-icon> Signing in...</ng-container>
+          } @else {
+            Sign In
+          }
+        </button>
+      </form>
+    </div>
+
+    <p class="footer-text">© 2026 Farhan Electronics · EIMS v1.0</p>
+  </div>
+</div>

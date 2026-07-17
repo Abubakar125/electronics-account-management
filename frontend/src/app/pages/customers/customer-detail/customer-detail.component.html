@@ -1,0 +1,152 @@
+<div class="page-container">
+  @if (loading()) {
+    <div class="skeleton" style="height: 200px; border-radius: 12px; margin-bottom: 20px;"></div>
+    <div class="skeleton" style="height: 400px; border-radius: 12px;"></div>
+  } @else if (customer()) {
+    <!-- Profile Header -->
+    <div class="profile-header eims-card">
+      <div class="profile-left">
+        <div class="profile-photo">
+          @if (photoUrl(customer()?.photo)) {
+            <img [src]="photoUrl(customer()?.photo)!" alt="Photo" />
+          } @else {
+            <span>{{ customer()!.name.charAt(0).toUpperCase() }}</span>
+          }
+        </div>
+        <div class="profile-info">
+          <div class="name-row">
+            <h1>{{ customer()!.name }}</h1>
+            <span class="code-badge">{{ customer()!.customer_code }}</span>
+          </div>
+          <p class="father-name">S/o {{ customer()!.father_name || 'N/A' }}</p>
+          <div class="info-chips">
+            <span class="info-chip"><mat-icon>credit_card</mat-icon>{{ customer()!.cnic }}</span>
+            <span class="info-chip"><mat-icon>phone</mat-icon>{{ customer()!.phone1 }}</span>
+            @if (customer()!.phone2) {
+              <span class="info-chip"><mat-icon>phone</mat-icon>{{ customer()!.phone2 }}</span>
+            }
+            @if (customer()!.address) {
+              <span class="info-chip"><mat-icon>location_on</mat-icon>{{ customer()!.address }}</span>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <a mat-stroked-button [routerLink]="['/customers', customer()!.id, 'edit']">
+          <mat-icon>edit</mat-icon> Edit
+        </a>
+        <button mat-stroked-button color="warn" (click)="onDelete()">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+        <a mat-flat-button color="primary" routerLink="/accounts/new" [queryParams]="{customer_id: customer()!.id}">
+          <mat-icon>add</mat-icon> New Account
+        </a>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    @if (summary()) {
+      <div class="summary-grid">
+        <div class="summary-card">
+          <p class="sum-label">Total Accounts</p>
+          <p class="sum-value">{{ summary()!.totalAccounts }}</p>
+        </div>
+        <div class="summary-card active">
+          <p class="sum-label">Active</p>
+          <p class="sum-value">{{ summary()!.activeAccounts }}</p>
+        </div>
+        <div class="summary-card completed">
+          <p class="sum-label">Completed</p>
+          <p class="sum-value">{{ summary()!.completedAccounts }}</p>
+        </div>
+        <div class="summary-card paid">
+          <p class="sum-label">Total Paid</p>
+          <p class="sum-value">{{ formatCurrency(summary()!.totalPaid) }}</p>
+        </div>
+        <div class="summary-card outstanding">
+          <p class="sum-label">Outstanding</p>
+          <p class="sum-value">{{ formatCurrency(summary()!.outstanding) }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Tabs -->
+    <mat-tab-group>
+      <!-- Accounts Tab -->
+      <mat-tab label="Accounts ({{ customer()!.accounts?.length || 0 }})">
+        <div class="tab-content">
+          @if (!customer()!.accounts?.length) {
+            <div class="empty-state">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <p>No accounts yet</p>
+              <a mat-flat-button color="primary" routerLink="/accounts/new" [queryParams]="{customer_id: customer()!.id}">Add First Account</a>
+            </div>
+          } @else {
+            <div class="accounts-list">
+              @for (account of customer()!.accounts; track account.id) {
+                <a [routerLink]="['/accounts', account.id]" class="account-card">
+                  <div class="acc-left">
+                    <p class="acc-number">{{ account.account_number }}</p>
+                    <p class="acc-product">{{ account.product_name }}</p>
+                  </div>
+                  <div class="acc-right">
+                    <p class="acc-remaining">{{ formatCurrency(account.remaining) }}</p>
+                    <span [class]="getStatusClass(account.status)">{{ account.status }}</span>
+                  </div>
+                  <mat-icon class="acc-arrow">chevron_right</mat-icon>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Timeline Tab -->
+      <mat-tab label="Timeline">
+        <div class="tab-content">
+          @if (!timeline().length) {
+            <div class="empty-state"><mat-icon>timeline</mat-icon><p>No activity yet</p></div>
+          } @else {
+            <div class="timeline">
+              @for (event of timeline(); track $index) {
+                <div class="timeline-item">
+                  <div class="timeline-dot" [class]="'dot-' + event.color">
+                    <mat-icon>{{ event.icon }}</mat-icon>
+                  </div>
+                  <div class="timeline-content">
+                    <p class="tl-title">{{ event.title }}</p>
+                    <p class="tl-desc">{{ event.description }}</p>
+                    <p class="tl-date">{{ event.date | date:'dd MMM yyyy, h:mm a' }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Documents Tab -->
+      <mat-tab label="Documents">
+        <div class="tab-content">
+          <div class="docs-grid">
+            @if (customer()!.cnic_front) {
+              <div class="doc-item">
+                <p class="doc-label">CNIC Front</p>
+                <img [src]="photoUrl(customer()!.cnic_front)" alt="CNIC Front" class="doc-img" />
+              </div>
+            }
+            @if (customer()!.cnic_back) {
+              <div class="doc-item">
+                <p class="doc-label">CNIC Back</p>
+                <img [src]="photoUrl(customer()!.cnic_back)" alt="CNIC Back" class="doc-img" />
+              </div>
+            }
+            @if (!customer()!.cnic_front && !customer()!.cnic_back) {
+              <div class="empty-state"><mat-icon>description</mat-icon><p>No documents uploaded</p></div>
+            }
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

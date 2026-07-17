@@ -1,0 +1,42 @@
+<header class="navbar">
+  <div class="navbar-left">
+    <button mat-icon-button (click)="onToggleSidebar()" matTooltip="Toggle sidebar">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search customer name, CNIC, phone..."
+        (keyup.enter)="onSearch()"
+        class="search-input"
+      />
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <button mat-icon-button (click)="toggleDarkMode()" [matTooltip]="isDarkMode() ? 'Light Mode' : 'Dark Mode'">
+      <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" matTooltip="Account">
+      <div class="avatar">{{ auth.currentUser()?.username?.charAt(0)?.toUpperCase() }}</div>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <div class="menu-header">
+        <p class="menu-username">{{ auth.currentUser()?.username }}</p>
+        <p class="menu-role">Administrator</p>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item routerLink="/settings">
+        <mat-icon>settings</mat-icon> Settings
+      </button>
+      <button mat-menu-item (click)="auth.logout()">
+        <mat-icon>logout</mat-icon> Logout
+      </button>
+    </mat-menu>
+  </div>
+</header>

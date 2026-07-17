@@ -1,0 +1,179 @@
+<div class="dashboard">
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Welcome to Farhan Electronics EIMS</p>
+    </div>
+    <div class="header-actions">
+      <a mat-stroked-button routerLink="/customers/new">
+        <mat-icon>person_add</mat-icon> New Customer
+      </a>
+      <a mat-flat-button color="primary" routerLink="/accounts/new">
+        <mat-icon>add</mat-icon> New Account
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <app-stats-card
+      title="Total Customers"
+      [value]="stats()?.totalCustomers ?? 0"
+      icon="people"
+      color="blue"
+      [loading]="loading()"
+    />
+    <app-stats-card
+      title="Active Accounts"
+      [value]="stats()?.activeAccounts ?? 0"
+      icon="account_balance_wallet"
+      color="purple"
+      [loading]="loading()"
+    />
+    <app-stats-card
+      title="Completed Accounts"
+      [value]="stats()?.completedAccounts ?? 0"
+      icon="check_circle"
+      color="green"
+      [loading]="loading()"
+    />
+    <app-stats-card
+      title="Outstanding Balance"
+      [value]="stats()?.outstanding ?? 0"
+      icon="account_balance"
+      color="red"
+      prefix="PKR "
+      [loading]="loading()"
+    />
+    <app-stats-card
+      title="Today's Collection"
+      [value]="stats()?.todayCollection ?? 0"
+      icon="today"
+      color="amber"
+      prefix="PKR "
+      [loading]="loading()"
+    />
+    <app-stats-card
+      title="Monthly Collection"
+      [value]="stats()?.monthlyCollection ?? 0"
+      icon="calendar_month"
+      color="green"
+      prefix="PKR "
+      [loading]="loading()"
+    />
+  </div>
+
+  <div class="bottom-grid">
+    <!-- Recent Payments -->
+    <div class="eims-card">
+      <div class="section-header">
+        <h2>Recent Payments</h2>
+        <a mat-button routerLink="/payments">View All</a>
+      </div>
+
+      @if (loading()) {
+        <div class="skeleton-rows">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton" style="height: 44px; border-radius: 6px;"></div>
+          }
+        </div>
+      } @else if (!stats()?.recentPayments?.length) {
+        <div class="empty-state">
+          <mat-icon>payments</mat-icon>
+          <p>No payments recorded yet</p>
+        </div>
+      } @else {
+        <table mat-table [dataSource]="stats()?.recentPayments || []" class="w-full">
+          <ng-container matColumnDef="receipt_no">
+            <th mat-header-cell *matHeaderCellDef>Receipt</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="text-blue-600 font-medium text-sm">{{ p.receipt_no }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let p" class="text-sm">{{ p.account?.customer?.name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Amount</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="font-semibold text-emerald-600 text-sm">PKR {{ p.amount | number }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let p" class="text-slate-500 text-sm">{{ p.payment_date | date:'dd MMM' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="paymentsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: paymentsColumns;" class="table-row"></tr>
+        </table>
+      }
+    </div>
+
+    <!-- Upcoming Due -->
+    <div class="eims-card">
+      <div class="section-header">
+        <h2>Upcoming Due (7 days)</h2>
+        <a mat-button routerLink="/accounts">View All</a>
+      </div>
+
+      @if (loading()) {
+        <div class="skeleton-rows">
+          @for (i of [1,2,3]; track i) {
+            <div class="skeleton" style="height: 56px; border-radius: 6px;"></div>
+          }
+        </div>
+      } @else if (!stats()?.upcomingDue?.length) {
+        <div class="empty-state">
+          <mat-icon>event_available</mat-icon>
+          <p>No upcoming dues in next 7 days</p>
+        </div>
+      } @else {
+        @for (account of stats()?.upcomingDue; track account.id) {
+          <div class="due-item" [routerLink]="['/accounts', account.id]">
+            <div class="due-info">
+              <p class="due-account">{{ account.account_number }}</p>
+              <p class="due-customer">{{ account.customer?.name }}</p>
+              <p class="due-product text-slate-500 text-xs">{{ account.product_name }}</p>
+            </div>
+            <div class="due-right">
+              <p class="due-amount">PKR {{ account.monthly_installment | number }}</p>
+              <p class="due-date">{{ account.due_date | date:'dd MMM' }}</p>
+              <span [class]="getStatusClass(account.status)">{{ account.status }}</span>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Recent Customers -->
+  <div class="eims-card mt-6">
+    <div class="section-header">
+      <h2>Recent Customers</h2>
+      <a mat-button routerLink="/customers">View All</a>
+    </div>
+    @if (loading()) {
+      <div class="skeleton" style="height: 120px; border-radius: 6px;"></div>
+    } @else if (!stats()?.recentCustomers?.length) {
+      <div class="empty-state">
+        <mat-icon>people</mat-icon>
+        <p>No customers added yet</p>
+      </div>
+    } @else {
+      <div class="customers-grid">
+        @for (c of stats()?.recentCustomers; track c.id) {
+          <a [routerLink]="['/customers', c.id]" class="customer-card">
+            <div class="customer-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
+            <div>
+              <p class="customer-name">{{ c.name }}</p>
+              <p class="customer-code">{{ c.customer_code }}</p>
+              <p class="customer-phone text-slate-500 text-xs">{{ c.phone1 }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

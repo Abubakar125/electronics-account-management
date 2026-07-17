@@ -1,0 +1,44 @@
+.dialog-container {
+  padding: 8px;
+  text-align: center;
+}
+
+.dialog-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+
+  mat-icon { font-size: 32px; width: 32px; height: 32px; }
+
+  &--danger { background: #fee2e2; mat-icon { color: #dc2626; } }
+  &--warning { background: #fef3c7; mat-icon { color: #d97706; } }
+  &--info { background: #dbeafe; mat-icon { color: #2563eb; } }
+}
+
+.dialog-title {
+  font-size: 18px !important;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.dialog-message p {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0 8px !important;
+}
+
+.btn--danger { background: #dc2626 !important; color: white !important; }
+.btn--warning { background: #d97706 !important; color: white !important; }
+.btn--info { background: #2563eb !important; color: white !important; }

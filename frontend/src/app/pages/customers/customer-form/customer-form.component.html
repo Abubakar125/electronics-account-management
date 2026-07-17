@@ -1,0 +1,143 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <a mat-icon-button routerLink="/customers"><mat-icon>arrow_back</mat-icon></a>
+      <h1>{{ isEdit() ? 'Edit Customer' : 'Add New Customer' }}</h1>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="eims-card">
+      <div class="skeleton-form">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="skeleton" style="height: 56px; border-radius: 6px; margin-bottom: 16px;"></div>
+        }
+      </div>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <!-- Personal Info -->
+        <div class="eims-card">
+          <h2 class="section-title">Personal Information</h2>
+          <div class="fields-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name *</mat-label>
+              <input matInput formControlName="name" />
+              @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+                <mat-error>Name is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Father / Husband Name</mat-label>
+              <input matInput formControlName="father_name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>CNIC *</mat-label>
+              <input matInput formControlName="cnic" placeholder="35201-1234567-1" />
+              @if (form.get('cnic')?.hasError('pattern') && form.get('cnic')?.touched) {
+                <mat-error>Format: 35201-1234567-1</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Mobile Number 1 *</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="phone1" />
+              @if (form.get('phone1')?.hasError('required') && form.get('phone1')?.touched) {
+                <mat-error>Phone is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Mobile Number 2</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="phone2" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Occupation</mat-label>
+              <input matInput formControlName="occupation" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address</mat-label>
+              <textarea matInput formControlName="address" rows="2"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Reference</mat-label>
+              <input matInput formControlName="reference" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="eims-card">
+          <h2 class="section-title">Documents & Photos</h2>
+
+          <div class="upload-grid">
+            <!-- Customer Photo -->
+            <div class="upload-item">
+              <p class="upload-label">Customer Photo</p>
+              <div class="upload-box" (click)="photoInput.click()">
+                @if (photoPreview()) {
+                  <img [src]="photoPreview()" alt="Photo" class="preview-img" />
+                } @else {
+                  <div class="upload-placeholder">
+                    <mat-icon>add_a_photo</mat-icon>
+                    <span>Click to upload</span>
+                  </div>
+                }
+              </div>
+              <input #photoInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'photo')" />
+            </div>
+
+            <!-- CNIC Front -->
+            <div class="upload-item">
+              <p class="upload-label">CNIC Front</p>
+              <div class="upload-box" (click)="cnicFrontInput.click()">
+                @if (cnicFrontPreview()) {
+                  <img [src]="cnicFrontPreview()" alt="CNIC Front" class="preview-img" />
+                } @else {
+                  <div class="upload-placeholder">
+                    <mat-icon>credit_card</mat-icon>
+                    <span>Click to upload</span>
+                  </div>
+                }
+              </div>
+              <input #cnicFrontInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'cnic_front')" />
+            </div>
+
+            <!-- CNIC Back -->
+            <div class="upload-item">
+              <p class="upload-label">CNIC Back</p>
+              <div class="upload-box" (click)="cnicBackInput.click()">
+                @if (cnicBackPreview()) {
+                  <img [src]="cnicBackPreview()" alt="CNIC Back" class="preview-img" />
+                } @else {
+                  <div class="upload-placeholder">
+                    <mat-icon>credit_card</mat-icon>
+                    <span>Click to upload</span>
+                  </div>
+                }
+              </div>
+              <input #cnicBackInput type="file" accept="image/*" hidden (change)="onFileChange($event, 'cnic_back')" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <a mat-stroked-button routerLink="/customers">Cancel</a>
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+          @if (saving()) { <mat-icon class="spin">refresh</mat-icon> } Saving...
+          {{ !saving() ? (isEdit() ? 'Update Customer' : 'Create Customer') : '' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

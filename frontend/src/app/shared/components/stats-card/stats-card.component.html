@@ -1,0 +1,18 @@
+@if (loading) {
+  <div class="card skeleton-card">
+    <div class="skeleton" style="height: 20px; width: 60%; margin-bottom: 12px;"></div>
+    <div class="skeleton" style="height: 36px; width: 80%;"></div>
+  </div>
+} @else {
+  <div class="card" [class]="'card--' + color">
+    <div class="card-content">
+      <div class="card-info">
+        <p class="card-title">{{ title }}</p>
+        <p class="card-value">{{ prefix }}{{ value | number }}{{ suffix }}</p>
+      </div>
+      <div class="card-icon" [class]="'icon--' + color">
+        <mat-icon>{{ icon }}</mat-icon>
+      </div>
+    </div>
+  </div>
+}

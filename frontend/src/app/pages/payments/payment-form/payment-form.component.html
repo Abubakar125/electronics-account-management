@@ -1,0 +1,91 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <a mat-icon-button routerLink="/payments"><mat-icon>arrow_back</mat-icon></a>
+      <h1>Record Payment</h1>
+    </div>
+  </div>
+
+  <div class="form-layout">
+    <div class="eims-card form-card">
+      <h2 class="section-title">Payment Details</h2>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-fields">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select Account *</mat-label>
+          <mat-icon matPrefix>account_balance_wallet</mat-icon>
+          <mat-select formControlName="account_id">
+            @for (a of accounts(); track a.id) {
+              <mat-option [value]="a.id">
+                {{ a.account_number }} - {{ a.customer?.name }} ({{ a.product_name }})
+              </mat-option>
+            }
+          </mat-select>
+          @if (form.get('account_id')?.hasError('required') && form.get('account_id')?.touched) {
+            <mat-error>Account is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Payment Date *</mat-label>
+          <mat-icon matPrefix>calendar_today</mat-icon>
+          <input matInput type="date" formControlName="payment_date" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Amount Paid (PKR) *</mat-label>
+          <mat-icon matPrefix>payments</mat-icon>
+          <input matInput type="number" formControlName="amount" />
+          @if (form.get('amount')?.hasError('required') && form.get('amount')?.touched) {
+            <mat-error>Amount is required</mat-error>
+          }
+          @if (form.get('amount')?.hasError('min') && form.get('amount')?.touched) {
+            <mat-error>Amount must be greater than 0</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Remarks</mat-label>
+          <input matInput formControlName="remarks" placeholder="Optional notes..." />
+        </mat-form-field>
+
+        <div class="form-actions">
+          <a mat-stroked-button routerLink="/payments">Cancel</a>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving() || form.invalid">
+            @if (saving()) { <mat-icon class="spin">refresh</mat-icon> }
+            {{ saving() ? 'Recording...' : 'Record Payment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Account Summary -->
+    @if (selectedAccount()) {
+      <div class="eims-card account-summary">
+        <h2 class="section-title">Account Summary</h2>
+        <div class="summary-items">
+          <div class="sum-row"><span>Account</span><strong>{{ selectedAccount()!.account_number }}</strong></div>
+          <div class="sum-row"><span>Customer</span><strong>{{ selectedAccount()!.customer?.name }}</strong></div>
+          <div class="sum-row"><span>Product</span><strong>{{ selectedAccount()!.product_name }}</strong></div>
+          <hr />
+          <div class="sum-row"><span>Total Price</span><strong>{{ formatCurrency(selectedAccount()!.total_price) }}</strong></div>
+          <div class="sum-row highlight"><span>Current Balance</span><strong class="text-red-600">{{ formatCurrency(selectedAccount()!.remaining) }}</strong></div>
+          <div class="sum-row"><span>Monthly Amount</span><strong>{{ formatCurrency(selectedAccount()!.monthly_installment) }}</strong></div>
+          <hr />
+          <div class="sum-row result">
+            <span>Balance After Payment</span>
+            <strong [class.text-emerald-600]="remainingAfterPayment === 0" [class.text-blue-600]="remainingAfterPayment > 0">
+              {{ formatCurrency(remainingAfterPayment) }}
+            </strong>
+          </div>
+          @if (remainingAfterPayment === 0) {
+            <div class="completed-msg">
+              <mat-icon>check_circle</mat-icon>
+              This payment will complete the account!
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

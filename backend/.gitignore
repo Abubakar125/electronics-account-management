@@ -1,0 +1,9 @@
+node_modules/
+.env
+src/uploads/customers/*
+src/uploads/cnic/*
+src/uploads/logos/*
+!src/uploads/customers/.gitkeep
+!src/uploads/cnic/.gitkeep
+!src/uploads/logos/.gitkeep
+*.log

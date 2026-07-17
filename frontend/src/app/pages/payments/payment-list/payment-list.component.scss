@@ -1,0 +1,24 @@
+.page-container { max-width: 1400px; margin: 0 auto; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px;
+  h1 { font-size: 26px; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
+  .subtitle { color: #64748b; margin: 0; font-size: 14px; }
+}
+.mb-4 { margin-bottom: 16px; }
+.filters-bar { display: flex; align-items: center; gap: 12px; padding: 12px 24px; flex-wrap: wrap; }
+.filter-label { font-size: 13px; font-weight: 500; color: #64748b; }
+.date-input { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none; &:focus { border-color: #3b82f6; } }
+.receipt-no { font-family: monospace; font-size: 13px; font-weight: 700; color: #1e40af; }
+.cust-link { font-size: 14px; font-weight: 600; color: #1e40af; text-decoration: none; &:hover { text-decoration: underline; } }
+.acc-no-sm { font-family: monospace; font-size: 12px; font-weight: 700; color: #2563eb; margin: 0 0 2px; }
+.prod-name-sm { font-size: 12px; margin: 0; }
+.amount-green { font-size: 14px; font-weight: 700; color: #059669; }
+.text-sm { font-size: 13px; }
+.text-slate-500 { color: #64748b; }
+.text-slate-600 { color: #475569; }
+.p-4 { padding: 16px; }
+.w-full { width: 100%; }
+.empty-state { text-align: center; padding: 64px 32px; color: #94a3b8;
+  mat-icon { font-size: 64px; width: 64px; height: 64px; display: block; margin: 0 auto 16px; }
+  h3 { font-size: 18px; color: #475569; margin: 0 0 8px; }
+  p { margin: 0; }
+}
