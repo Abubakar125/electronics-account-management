@@ -49,6 +49,26 @@ html, body {
   font-family: 'Inter', Roboto, 'Helvetica Neue', sans-serif;
   background-color: #f8fafc;
   color: #0f172a;
+  -webkit-text-size-adjust: 100%;
+}
+
+// Prevent horizontal overflow on mobile
+body { overflow-x: hidden; }
+
+// Mobile-friendly tap targets
+@media (max-width: 768px) {
+  button, a, [role="button"] { min-height: 36px; }
+}
+
+// Material dialog responsive
+@media (max-width: 600px) {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 16px;
+  }
+  .cdk-overlay-pane {
+    max-width: calc(100vw - 32px) !important;
+    width: calc(100vw - 32px) !important;
+  }
 }
 
 .dark-mode body, .dark-mode {

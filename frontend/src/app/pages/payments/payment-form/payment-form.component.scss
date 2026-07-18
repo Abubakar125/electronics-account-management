@@ -228,6 +228,8 @@ $green:      #059669;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media (max-width: 640px) { padding: 20px 16px; }
 }
 
 .col-divider {
@@ -384,6 +386,8 @@ mat-form-field { width: 100%; }
   justify-content: space-between;
   padding: 16px 28px 24px;
   border-top: 1px solid #F1F5F9;
+
+  @media (max-width: 480px) { padding: 14px 16px 20px; }
 }
 
 .cancel-link {

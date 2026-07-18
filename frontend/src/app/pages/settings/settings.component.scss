@@ -181,6 +181,8 @@ $red:        #EF4444;
   flex-direction: column;
   gap: 18px;
   animation: fieldsEnter 0.4s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @media (max-width: 480px) { padding: 20px 16px; }
 }
 
 @keyframes fieldsEnter {

@@ -24,6 +24,11 @@ $accent: #059669;
   gap: 16px;
   flex-wrap: wrap;
   animation: fadeUp 0.38s cubic-bezier(0.22,1,0.36,1) both;
+
+  @media (max-width: 480px) {
+    .page-title { font-size: 22px; }
+    .add-btn { width: 100%; justify-content: center; }
+  }
 }
 
 .page-title-wrap {

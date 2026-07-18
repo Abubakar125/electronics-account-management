@@ -118,6 +118,8 @@ $font: 'Plus Jakarta Sans', sans-serif;
   line-height: 1;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 480px) { font-size: 22px; }
 }
 
 .stat-bar {
