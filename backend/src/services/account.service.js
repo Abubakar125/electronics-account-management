@@ -1,6 +1,7 @@
 const { Account, Customer, Payment } = require('../models');
 const { Op } = require('sequelize');
 const { generateAccountNumber } = require('../utils/codeGenerator');
+const { todayPKT } = require('../utils/date');
 
 class AccountService {
   async getAll(query = {}) {
@@ -99,7 +100,7 @@ class AccountService {
   }
 
   async markOverdueAccounts() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = todayPKT();
     const [count] = await Account.update(
       { status: 'overdue' },
       { where: { status: 'active', due_date: { [Op.lt]: today } } }

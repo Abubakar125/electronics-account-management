@@ -8,11 +8,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '../../../services/customer.service';
+import { CnicMaskDirective } from '../../../shared/directives/cnic-mask.directive';
 
 @Component({
   selector: 'app-customer-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, CnicMaskDirective],
   templateUrl: './customer-form.component.html',
   styleUrl: './customer-form.component.scss',
 })

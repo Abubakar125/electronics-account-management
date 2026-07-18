@@ -2,6 +2,7 @@ const { Payment, Account, Customer, sequelize } = require('../models');
 const { Op, fn, col, literal } = require('sequelize');
 const { generateReport } = require('../utils/pdfGenerator');
 const { generateExcel } = require('../utils/excelGenerator');
+const { todayPKT, firstOfMonthPKT, daysFromNowPKT } = require('../utils/date');
 
 class ReportService {
   _getDateRange(period, from, to) {
@@ -84,9 +85,9 @@ class ReportService {
   }
 
   async getDashboardStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
-    const nextWeek = new Date(); nextWeek.setDate(nextWeek.getDate() + 7);
+    const today = todayPKT();
+    const firstOfMonth = firstOfMonthPKT();
+    const nextWeek = daysFromNowPKT(7);
 
     const [
       totalCustomers,
@@ -98,6 +99,7 @@ class ReportService {
       recentPayments,
       recentCustomers,
       upcomingDue,
+      recentCompletedAccounts,
     ] = await Promise.all([
       Customer.count(),
       Account.count({ where: { status: { [Op.in]: ['active', 'overdue'] } } }),
@@ -116,10 +118,16 @@ class ReportService {
       Account.findAll({
         where: {
           status: { [Op.in]: ['active', 'overdue'] },
-          due_date: { [Op.between]: [today, nextWeek.toISOString().split('T')[0]] },
+          due_date: { [Op.between]: [today, nextWeek] },
         },
         limit: 10, order: [['due_date', 'ASC']],
         include: [{ model: Customer, as: 'customer', attributes: ['id', 'name', 'phone1', 'customer_code'] }],
+      }),
+      Account.findAll({
+        where: { status: 'completed' },
+        order: [['updated_at', 'DESC']],
+        attributes: ['id', 'account_number', 'product_name', 'total_price', 'updated_at'],
+        include: [{ model: Customer, as: 'customer', attributes: ['id', 'name', 'customer_code'] }],
       }),
     ]);
 
@@ -133,6 +141,7 @@ class ReportService {
       recentPayments,
       recentCustomers,
       upcomingDue,
+      recentCompletedAccounts,
     };
   }
 

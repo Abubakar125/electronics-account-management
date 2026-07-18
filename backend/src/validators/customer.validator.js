@@ -12,7 +12,7 @@ const customerCreateRules = [
   body('occupation').optional().trim().isLength({ max: 100 }),
   body('ref_name').optional().trim().isLength({ max: 150 }),
   body('ref_phone').optional().trim().isLength({ max: 20 }),
-  body('ref_cnic').optional().trim()
+  body('ref_cnic').optional({ values: 'falsy' }).trim()
     .matches(/^\d{5}-\d{7}-\d{1}$/).withMessage('Reference CNIC must be in format: 35201-1234567-1'),
   body('ref_address').optional().trim(),
 ];
@@ -28,7 +28,7 @@ const customerUpdateRules = [
   body('occupation').optional().trim().isLength({ max: 100 }),
   body('ref_name').optional().trim().isLength({ max: 150 }),
   body('ref_phone').optional().trim().isLength({ max: 20 }),
-  body('ref_cnic').optional().trim()
+  body('ref_cnic').optional({ values: 'falsy' }).trim()
     .matches(/^\d{5}-\d{7}-\d{1}$/).withMessage('Reference CNIC must be in format: 35201-1234567-1'),
   body('ref_address').optional().trim(),
 ];

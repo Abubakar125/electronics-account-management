@@ -130,47 +130,106 @@
 
   </div>
 
-  <!-- ── Recent Customers ── -->
-  <div class="panel panel--purple">
-    <div class="panel-header">
-      <div class="panel-title-group">
-        <div class="panel-icon purple"><mat-icon>people</mat-icon></div>
-        <div>
-          <h2 class="panel-title">Recent Customers</h2>
-          <p class="panel-sub">Latest registrations</p>
+  <!-- ── Bottom Row: Recent Customers + Completed Accounts ── -->
+  <div class="bottom-grid">
+
+    <!-- Recent Customers -->
+    <div class="panel panel--purple">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-icon purple"><mat-icon>people</mat-icon></div>
+          <div>
+            <h2 class="panel-title">Recent Customers</h2>
+            <p class="panel-sub">Latest registrations</p>
+          </div>
         </div>
+        <a routerLink="/customers" class="view-all-link">
+          View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
+        </a>
       </div>
-      <a routerLink="/customers" class="view-all-link">
-        View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
-      </a>
+
+      @if (loading()) {
+        <div class="customers-grid">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton" style="height:84px; border-radius:16px;"></div>
+          }
+        </div>
+      } @else if (!stats()?.recentCustomers?.length) {
+        <div class="empty-state">
+          <div class="empty-icon-wrap"><mat-icon>people</mat-icon></div>
+          <p>No customers added yet</p>
+        </div>
+      } @else {
+        <div class="customers-grid">
+          @for (c of stats()?.recentCustomers; track c.id) {
+            <a [routerLink]="['/customers', c.id]" class="customer-card">
+              <div class="cust-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
+              <div class="cust-info">
+                <p class="cust-name">{{ c.name }}</p>
+                <p class="cust-code">{{ c.customer_code }}</p>
+                <p class="cust-phone">{{ c.phone1 }}</p>
+              </div>
+              <mat-icon class="cust-arrow">chevron_right</mat-icon>
+            </a>
+          }
+        </div>
+      }
     </div>
 
-    @if (loading()) {
-      <div class="customers-grid">
-        @for (i of [1,2,3,4,5]; track i) {
-          <div class="skeleton" style="height:84px; border-radius:16px;"></div>
-        }
+    <!-- Completed Accounts -->
+    <div class="panel panel--green">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <div class="panel-icon green"><mat-icon>check_circle</mat-icon></div>
+          <div>
+            <h2 class="panel-title">Completed Accounts</h2>
+            <p class="panel-sub">{{ stats()?.recentCompletedAccounts?.length ?? 0 }} total</p>
+          </div>
+        </div>
+        <a routerLink="/accounts" [queryParams]="{status: 'completed'}" class="view-all-link">
+          View All <mat-icon class="link-arrow">arrow_forward</mat-icon>
+        </a>
       </div>
-    } @else if (!stats()?.recentCustomers?.length) {
-      <div class="empty-state">
-        <div class="empty-icon-wrap"><mat-icon>people</mat-icon></div>
-        <p>No customers added yet</p>
-      </div>
-    } @else {
-      <div class="customers-grid">
-        @for (c of stats()?.recentCustomers; track c.id) {
-          <a [routerLink]="['/customers', c.id]" class="customer-card">
-            <div class="cust-avatar">{{ c.name.charAt(0).toUpperCase() }}</div>
-            <div class="cust-info">
-              <p class="cust-name">{{ c.name }}</p>
-              <p class="cust-code">{{ c.customer_code }}</p>
-              <p class="cust-phone">{{ c.phone1 }}</p>
-            </div>
-            <mat-icon class="cust-arrow">chevron_right</mat-icon>
+
+      @if (loading()) {
+        <div class="skeleton-list">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton" style="height:64px; border-radius:12px;"></div>
+          }
+        </div>
+      } @else if (!stats()?.recentCompletedAccounts?.length) {
+        <div class="empty-state">
+          <div class="empty-icon-wrap"><mat-icon>check_circle</mat-icon></div>
+          <p>No completed accounts yet</p>
+        </div>
+      } @else {
+        <div class="completed-list">
+          @for (a of stats()?.recentCompletedAccounts?.slice(0, 5); track a.id) {
+            <a [routerLink]="['/accounts', a.id]" class="completed-row">
+              <div class="completed-icon-wrap">
+                <mat-icon>task_alt</mat-icon>
+              </div>
+              <div class="completed-info">
+                <p class="completed-account-no">{{ a.account_number }}</p>
+                <p class="completed-customer">{{ a.customer?.name }}</p>
+                <p class="completed-product">{{ a.product_name }}</p>
+              </div>
+              <div class="completed-right">
+                <p class="completed-amount">PKR {{ a.total_price | number }}</p>
+                <span class="badge badge-completed">Completed</span>
+              </div>
+            </a>
+          }
+        </div>
+        @if ((stats()?.recentCompletedAccounts?.length ?? 0) > 5) {
+          <a routerLink="/accounts" [queryParams]="{status: 'completed'}" class="see-all-btn">
+            See All {{ stats()?.recentCompletedAccounts?.length }} Completed Accounts
+            <mat-icon>arrow_forward</mat-icon>
           </a>
         }
-      </div>
-    }
+      }
+    </div>
+
   </div>
 
 </div>

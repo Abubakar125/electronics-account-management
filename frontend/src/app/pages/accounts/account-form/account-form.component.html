@@ -162,13 +162,17 @@
                 <div class="field-group">
                   <label class="field-label">Purchase Date <span class="req">*</span></label>
                   <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <input matInput type="date" formControlName="purchase_date" />
+                    <input matInput [matDatepicker]="purchasePicker" formControlName="purchase_date" placeholder="DD MMM YYYY" readonly />
+                    <mat-datepicker-toggle matIconSuffix [for]="purchasePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #purchasePicker></mat-datepicker>
                   </mat-form-field>
                 </div>
                 <div class="field-group">
                   <label class="field-label">First Due Date</label>
                   <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <input matInput type="date" formControlName="due_date" />
+                    <input matInput [matDatepicker]="duePicker" formControlName="due_date" placeholder="DD MMM YYYY" readonly />
+                    <mat-datepicker-toggle matIconSuffix [for]="duePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #duePicker></mat-datepicker>
                   </mat-form-field>
                 </div>
               </div>

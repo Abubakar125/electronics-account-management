@@ -80,6 +80,7 @@ export interface DashboardStats {
   recentPayments: Payment[];
   recentCustomers: Customer[];
   upcomingDue: Account[];
+  recentCompletedAccounts: Account[];
 }
 
 export interface ApiResponse<T> {

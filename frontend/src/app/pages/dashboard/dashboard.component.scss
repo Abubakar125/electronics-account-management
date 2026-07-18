@@ -117,21 +117,22 @@ $text:  #0F172A;
   height: 40px;
   padding: 0 18px;
   border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: #94A3B8;
+  border: none;
+  background: linear-gradient(135deg, #047857, #10B981);
+  color: #FFF;
   font-family: $font;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
+  box-shadow: 0 4px 16px rgba(16,185,129,0.45);
   transition: all 0.18s;
 
   mat-icon { font-size: 17px; width: 17px; height: 17px; }
 
   &:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.24);
-    color: #F8FAFC;
+    background: linear-gradient(135deg, #065F46, #059669);
+    box-shadow: 0 6px 22px rgba(16,185,129,0.55);
+    transform: translateY(-1px);
   }
 }
 
@@ -194,6 +195,7 @@ $text:  #0F172A;
   &--blue   { border-top-color: #3B82F6; }
   &--red    { border-top-color: #EF4444; }
   &--purple { border-top-color: #8B5CF6; }
+  &--green  { border-top-color: #10B981; }
 }
 
 @keyframes panelIn {
@@ -230,6 +232,7 @@ $text:  #0F172A;
   &.blue   { background: linear-gradient(135deg, #1D4ED8, #3B82F6); box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
   &.red    { background: linear-gradient(135deg, #B91C1C, #EF4444); box-shadow: 0 4px 14px rgba(239,68,68,0.4); }
   &.purple { background: linear-gradient(135deg, #6D28D9, #8B5CF6); box-shadow: 0 4px 14px rgba(139,92,246,0.4); }
+  &.green  { background: linear-gradient(135deg, #047857, #10B981); box-shadow: 0 4px 14px rgba(16,185,129,0.4); }
 }
 
 .panel-title {
@@ -349,7 +352,7 @@ $text:  #0F172A;
 }
 
 .payment-info { flex: 1; min-width: 0; }
-.payment-name    { font-family: $font; font-size: 13.5px; font-weight: 600; color: $dark; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.payment-name    { font-family: $font; font-size: 13.5px; font-weight: 600; color: $dark; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
 .payment-receipt { font-family: $font; font-size: 11px; color: #94A3B8; margin: 0; font-weight: 500; }
 
 .payment-right { text-align: right; flex-shrink: 0; }
@@ -426,11 +429,9 @@ $text:  #0F172A;
 
 // ── Customers Grid ───────────────────────────────────────
 .customers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-
-  @media (max-width: 480px) { grid-template-columns: 1fr; }
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .customer-card {
@@ -470,7 +471,7 @@ $text:  #0F172A;
 }
 
 .cust-info { flex: 1; min-width: 0; }
-.cust-name  { font-family: $font; font-size: 13.5px; font-weight: 600; color: $dark; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cust-name  { font-family: $font; font-size: 13.5px; font-weight: 600; color: $dark; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
 .cust-code  { font-family: $font; font-size: 11px; color: $blue; font-weight: 700; margin: 0 0 2px; }
 .cust-phone { font-family: $font; font-size: 11px; color: #94A3B8; margin: 0; }
 
@@ -481,4 +482,89 @@ $text:  #0F172A;
   color: #CBD5E1;
   flex-shrink: 0;
   transition: transform 0.18s, color 0.18s;
+}
+
+// ── Bottom Grid ──────────────────────────────────────────
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+// ── Completed List ───────────────────────────────────────
+.completed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.completed-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #F0FDF4;
+  border: 1px solid #D1FAE5;
+  text-decoration: none;
+  transition: all 0.18s;
+
+  &:hover {
+    background: #DCFCE7;
+    border-color: #6EE7B7;
+    transform: translateX(3px);
+    box-shadow: 0 2px 12px rgba(16,185,129,0.12);
+  }
+}
+
+.completed-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #047857, #34D399);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(16,185,129,0.3);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: white; }
+}
+
+.completed-info { flex: 1; min-width: 0; }
+.completed-account-no { font-family: $font; font-size: 10.5px; font-weight: 700; color: #047857; margin: 0 0 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+.completed-customer   { font-family: $font; font-size: 13.5px; font-weight: 600; color: $dark; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
+.completed-product    { font-family: $font; font-size: 11px; color: #94A3B8; margin: 0; }
+
+.completed-right { text-align: right; flex-shrink: 0; }
+.completed-amount { font-family: $font; font-size: 13px; font-weight: 700; color: #047857; margin: 0 0 5px; }
+
+// ── See All Button ───────────────────────────────────────
+.see-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: #F0FDF4;
+  border: 1.5px dashed #6EE7B7;
+  color: #047857;
+  font-family: $font;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.18s;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; transition: transform 0.18s; }
+
+  &:hover {
+    background: #DCFCE7;
+    border-color: #10B981;
+    border-style: solid;
+    mat-icon { transform: translateX(3px); }
+  }
 }

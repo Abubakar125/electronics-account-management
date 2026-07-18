@@ -3,6 +3,18 @@ const { Op } = require('sequelize');
 const { generateCustomerCode } = require('../utils/codeGenerator');
 const path = require('path');
 
+function toTitleCase(str) {
+  if (!str) return str;
+  return str.trim().replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
+
+function normalizeNames(data) {
+  if (data.name)        data.name        = toTitleCase(data.name);
+  if (data.father_name) data.father_name = toTitleCase(data.father_name);
+  if (data.ref_name)    data.ref_name    = toTitleCase(data.ref_name);
+  return data;
+}
+
 class CustomerService {
   async getAll(query = {}) {
     const { search, page = 1, limit = 10 } = query;
@@ -53,7 +65,7 @@ class CustomerService {
 
   async create(data, files = {}) {
     const customer_code = await generateCustomerCode();
-    const customerData = { ...data, customer_code };
+    const customerData = normalizeNames({ ...data, customer_code });
 
     await this._handleFileUploads(customerData, files);
     return await Customer.create(customerData);
@@ -61,7 +73,7 @@ class CustomerService {
 
   async update(id, data, files = {}) {
     const customer = await this.getById(id);
-    await this._handleFileUploads(data, files);
+    await this._handleFileUploads(normalizeNames(data), files);
     await customer.update(data);
     return customer.reload();
   }
@@ -76,7 +88,12 @@ class CustomerService {
       include: [{
         model: Account,
         as: 'accounts',
-        include: [{ model: Payment, as: 'payments' }],
+        order: [['purchase_date', 'ASC']],
+        include: [{
+          model: Payment,
+          as: 'payments',
+          order: [['payment_date', 'ASC'], ['created_at', 'ASC']],
+        }],
       }],
     });
     if (!customer) throw { status: 404, message: 'Customer not found' };
@@ -86,6 +103,7 @@ class CustomerService {
     events.push({
       type: 'customer_created',
       date: customer.created_at,
+      sortKey: customer.created_at,
       title: 'Customer Registered',
       description: `Customer account created with code ${customer.customer_code}`,
       icon: 'person_add',
@@ -95,7 +113,8 @@ class CustomerService {
     for (const account of customer.accounts) {
       events.push({
         type: 'account_created',
-        date: account.created_at,
+        date: account.purchase_date,
+        sortKey: account.created_at,
         title: `Purchased ${account.product_name}`,
         description: `Account ${account.account_number} opened. Total: PKR ${parseFloat(account.total_price).toLocaleString()}`,
         icon: 'shopping_cart',
@@ -106,8 +125,9 @@ class CustomerService {
         events.push({
           type: 'payment_made',
           date: payment.payment_date,
-          title: 'Installment Paid',
-          description: `PKR ${parseFloat(payment.amount).toLocaleString()} paid. Receipt: ${payment.receipt_no}. Balance: PKR ${parseFloat(payment.remaining_balance).toLocaleString()}`,
+          sortKey: payment.created_at,
+          title: `Installment Paid — ${account.product_name}`,
+          description: `PKR ${parseFloat(payment.amount).toLocaleString()} paid on ${new Date(payment.payment_date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}. Receipt: ${payment.receipt_no}. Balance: PKR ${parseFloat(payment.remaining_balance).toLocaleString()}`,
           icon: 'payments',
           color: 'green',
         });
@@ -117,7 +137,8 @@ class CustomerService {
         events.push({
           type: 'account_completed',
           date: account.updated_at,
-          title: `Account Completed`,
+          sortKey: account.updated_at,
+          title: 'Account Completed',
           description: `${account.account_number} (${account.product_name}) fully paid`,
           icon: 'check_circle',
           color: 'emerald',
@@ -125,7 +146,12 @@ class CustomerService {
       }
     }
 
-    return events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort by date first; use created_at as tiebreaker for same-day events
+    return events.sort((a, b) => {
+      const dateDiff = new Date(a.date) - new Date(b.date);
+      if (dateDiff !== 0) return dateDiff;
+      return new Date(a.sortKey) - new Date(b.sortKey);
+    });
   }
 
   async getSummary(id) {

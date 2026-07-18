@@ -8,16 +8,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { AccountService } from '../../../services/account.service';
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../models';
 
+const DATE_FORMATS = {
+  parse: { dateInput: {} as Intl.DateTimeFormatOptions },
+  display: {
+    dateInput: { day: '2-digit', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions,
+    monthYearLabel: { month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions,
+    dateA11yLabel: { day: 'numeric', month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions,
+    monthYearA11yLabel: { month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions,
+  },
+};
+
 @Component({
   selector: 'app-account-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSelectModule, MatAutocompleteModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSelectModule, MatAutocompleteModule, MatDatepickerModule],
+  providers: [provideNativeDateAdapter(), { provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS }],
   templateUrl: './account-form.component.html',
   styleUrl: './account-form.component.scss',
 })
@@ -48,8 +61,8 @@ export class AccountFormComponent implements OnInit {
       advance: [0, Validators.min(0)],
       monthly_installment: ['', [Validators.required, Validators.min(1)]],
       duration: ['', [Validators.required, Validators.min(1)]],
-      purchase_date: [new Date().toISOString().split('T')[0], Validators.required],
-      due_date: [''],
+      purchase_date: [new Date(), Validators.required],
+      due_date: [null],
     });
   }
 
@@ -85,7 +98,8 @@ export class AccountFormComponent implements OnInit {
           customer_id: a.customer_id, product_name: a.product_name, brand: a.brand,
           model: a.model, total_price: a.total_price, advance: a.advance,
           monthly_installment: a.monthly_installment, duration: a.duration,
-          purchase_date: a.purchase_date, due_date: a.due_date,
+          purchase_date: a.purchase_date ? new Date(a.purchase_date + 'T00:00:00') : new Date(),
+          due_date: a.due_date ? new Date(a.due_date + 'T00:00:00') : null,
         });
         this.loading.set(false);
       },
@@ -109,11 +123,25 @@ export class AccountFormComponent implements OnInit {
     return Math.max(0, total - advance);
   }
 
+  private toDateStr(d: Date | string | null | undefined): string {
+    if (!d) return '';
+    if (typeof d === 'string') return d;
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving.set(true);
 
-    const data = { ...this.form.value };
+    const raw = this.form.value;
+    const data = {
+      ...raw,
+      purchase_date: this.toDateStr(raw.purchase_date),
+      due_date: this.toDateStr(raw.due_date),
+    };
     const request$ = this.isEdit()
       ? this.accountService.update(this.accountId()!, data)
       : this.accountService.create(data);

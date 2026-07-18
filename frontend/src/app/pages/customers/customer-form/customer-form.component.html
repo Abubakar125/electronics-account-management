@@ -67,7 +67,7 @@
                 <div class="field-group">
                   <label class="field-label">Full Name <span class="req">*</span></label>
                   <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <input matInput formControlName="name" placeholder="e.g. Muhammad Ali" />
+                    <input matInput formControlName="name" placeholder="e.g. Muhammad Ali" style="text-transform: capitalize" />
                     @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
                       <mat-error>Name is required</mat-error>
                     }
@@ -77,7 +77,7 @@
                 <div class="field-group">
                   <label class="field-label">Father / Husband Name</label>
                   <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <input matInput formControlName="father_name" placeholder="Optional" />
+                    <input matInput formControlName="father_name" placeholder="Optional" style="text-transform: capitalize" />
                   </mat-form-field>
                 </div>
               </div>
@@ -85,7 +85,7 @@
               <div class="field-group">
                 <label class="field-label">CNIC <span class="req">*</span></label>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <input matInput formControlName="cnic" placeholder="35201-1234567-1" />
+                  <input matInput formControlName="cnic" appCnicMask placeholder="35201-1234567-1" />
                   <mat-hint>Format: 35201-1234567-1</mat-hint>
                   @if (form.get('cnic')?.hasError('required') && form.get('cnic')?.touched) {
                     <mat-error>CNIC is required</mat-error>
@@ -140,7 +140,7 @@
               <div class="field-group">
                 <label class="field-label">Full Name</label>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <input matInput formControlName="ref_name" placeholder="Reference person's name" />
+                  <input matInput formControlName="ref_name" placeholder="Reference person's name" style="text-transform: capitalize" />
                 </mat-form-field>
               </div>
 
@@ -154,7 +154,7 @@
               <div class="field-group">
                 <label class="field-label">CNIC</label>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <input matInput formControlName="ref_cnic" placeholder="35201-1234567-1" />
+                  <input matInput formControlName="ref_cnic" appCnicMask placeholder="35201-1234567-1" />
                   <mat-hint>Optional — Format: 35201-1234567-1</mat-hint>
                   @if (form.get('ref_cnic')?.hasError('pattern') && form.get('ref_cnic')?.touched) {
                     <mat-error>Invalid format — use 35201-1234567-1</mat-error>

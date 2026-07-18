@@ -43,7 +43,13 @@ export class AccountListComponent implements OnInit {
 
   ngOnInit() {
     this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe(() => { this.page.set(0); this.load(); });
-    this.route.queryParams.subscribe(() => this.load());
+    this.route.queryParams.subscribe(params => {
+      if (params['status']) {
+        this.statusFilter.set(params['status']);
+        this.statusModel = params['status'];
+      }
+      this.load();
+    });
   }
 
   load() {

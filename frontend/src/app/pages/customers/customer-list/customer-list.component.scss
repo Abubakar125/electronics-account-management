@@ -420,6 +420,7 @@ $accent: $blue;
   font-size: 13.5px;
   font-weight: 600;
   color: $dark;
+  text-transform: capitalize;
   margin: 0 0 3px;
   transition: color 0.15s;
   white-space: nowrap;
@@ -435,6 +436,7 @@ $accent: $blue;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: capitalize;
 }
 
 .code-pill {
